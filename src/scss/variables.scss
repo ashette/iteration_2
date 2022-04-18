@@ -1,0 +1,97 @@
+$grid-breakpoints: (
+  "xs": 0,
+  "sm": 768px,
+  "md": 1024px,
+  "lg": 1440px,
+  "xl": 1920px,
+);
+
+$container-max-widths: (
+  "md": map-get($grid-breakpoints, "md") - 32,
+  "lg": map-get($grid-breakpoints, "lg"),
+  "xl": map-get($grid-breakpoints, "lg"),
+);
+
+$headings: (
+  "h1": (
+    "size": 70px,
+    "weight": 700,
+    "line-height": 1,
+  ),
+  "h2": (
+    "size": 40px,
+    "weight": 700,
+    "line-height": normal,
+  ),
+  "h3": (
+    "size": 32px,
+    "weight": 700,
+    "line-height": normal,
+  ),
+  "subtitle-1": (
+    "size": 26px,
+    "weight": 300,
+    "line-height": 30px,
+  ),
+  "subtitle-2": (
+    "size": 24px,
+    "weight": 300,
+    "line-height": 30px,
+  ),
+  "subtitle-3": (
+    "size": 18px,
+    "weight": 300,
+    "line-height": 30px,
+  ),
+  "button": (
+    "letter-spacing": normal,
+  ),
+);
+
+$border-radius-root: 8px;
+
+$btn-font-sizes: (
+  "x-small": 13px,
+  "small": 14px,
+  "default": 18px,
+  "large": 18px,
+  "x-large": 18px,
+);
+
+$btn-letter-spacing: normal;
+$btn-active-opacity: 0.2 !important;
+$btn-focus-opacity: 0.2;
+$btn-hover-opacity: 0.1;
+$btn-text-transform: unset;
+
+$btn-sizes: (
+  "x-small": 20,
+  "small": 28,
+  "default": 48,
+  "large": 48,
+  "x-large": 48,
+);
+
+$fab-sizes: (
+  "x-small": 32,
+  "small": 48,
+  "default": 56,
+  "large": 64,
+  "x-large": 72,
+);
+
+$navigation-drawer-border-width: 0;
+$list-item-title-font-size: 14px;
+$list-item-subtitle-font-size: 14px;
+$menu-content-elevation: 0;
+
+$ripple-animation-transition-in: none;
+$ripple-animation-transition-out: none;
+$ripple-animation-visible-opacity: none;
+
+$skeleton-loader-card-heading-loader-heading-margin: 16px 0;
+$dialog-elevation: 0;
+
+$shadow-key-umbra-opacity: rgba(0, 0, 0, 0.05);
+$shadow-key-penumbra-opacity: rgba(0, 0, 0, 0.05);
+$shadow-key-ambient-opacity: rgba(0, 0, 0, 0.05);
