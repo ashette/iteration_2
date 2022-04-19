@@ -5,23 +5,35 @@
       class="admin-content__container d-flex flex-column elevation-5"
       fluid
     >
-      <v-row class="flex-grow-0" no-gutters>
-        <Filters :filters="filters" />
+      <v-row
+        class="flex-grow-0"
+        no-gutters
+      >
+        <filters :filters="filters" />
       </v-row>
-      <v-container class="table-container flex-grow-1" fluid>
+      <v-container
+        class="table-container flex-grow-1"
+        fluid
+      >
         <v-row
           v-for="order in orders"
           :key="order.id"
           class="table-row align-center"
         >
-          <v-col class="table-col order-image" cols="1">
+          <v-col
+            class="table-col order-image"
+            cols="1"
+          >
             <v-img
               :src="order.carId.thumbnail.path"
               contain
               max-width="140"
             ></v-img>
           </v-col>
-          <v-col class="table-col order-info" cols="4">
+          <v-col
+            class="table-col order-info"
+            cols="4"
+          >
             <div>
               <strong>{{ order.carId.name }}</strong> в
               <strong>{{ order.cityId.name }}</strong> ,
@@ -34,7 +46,10 @@
               Цвет: <strong>{{ order.color }}</strong>
             </div>
           </v-col>
-          <v-col class="table-col order-options" cols="2">
+          <v-col
+            class="table-col order-options"
+            cols="2"
+          >
             <v-checkbox
               v-model="order.isFullTank"
               label="Полный бак"
@@ -57,15 +72,21 @@
               off-icon="$vuetify.icon.checkboxAdminOff"
             ></v-checkbox>
           </v-col>
-          <v-col class="table-col order-price" cols="2">
+          <v-col
+            class="table-col order-price"
+            cols="2"
+          >
             <span>{{ order.price }} <span class="price-currency">₽</span></span>
           </v-col>
           <v-col class="table-col order-controls text-right">
-            <ControlButtons />
+            <control-buttons />
           </v-col>
         </v-row>
       </v-container>
-      <v-row class="justify-center flex-grow-0" no-gutters>
+      <v-row
+        class="justify-center flex-grow-0"
+        no-gutters
+      >
         <v-pagination
           v-model="page"
           class="admin-pagination d-flex flex-grow-1"
@@ -206,6 +227,174 @@ export default {
           id: "5e26a191099b810b946c5d89",
         },
         id: "625321fc73b61100181024d6",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "2",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "3",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "4",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "5",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "6",
+      },
+      {
+        cityId: {
+          name: "Санкт-Петербург",
+          id: "6005b8f9ad015e0bb6997778",
+        },
+        pointId: {
+          name: "Пункт",
+          address: "56 Литейный проспект",
+          id: "615ae47018f5c2264119b939",
+        },
+        carId: {
+          name: "Tesla Model S",
+          categoryId: {
+            name: "Бизнес",
+            description: "Бизнес",
+            id: "611171dd2aed9a0b9b8506f9",
+          },
+          thumbnail: {
+            path: require("@/assets/car.jpg"),
+          },
+        },
+        color: "Синий",
+        dateFrom: 1649620800000,
+        dateTo: 1649707200000,
+        price: 10280,
+        isNeedChildChair: true,
+        id: "7",
       },
     ],
   }),

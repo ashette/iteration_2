@@ -1,10 +1,10 @@
 <template>
   <v-layout>
-    <Navigation />
+    <navigation />
     <v-main class="admin">
-      <ToolBar />
+      <tool-bar />
       <router-view />
-      <Footer />
+      <footer-bar />
     </v-main>
   </v-layout>
 </template>
@@ -12,9 +12,9 @@
 <script>
 import Navigation from "@/components/Navigation";
 import ToolBar from "@/components/ToolBarComponent";
-import Footer from "@/components/Footer";
+import FooterBar from "@/components/Footer";
 
 export default {
-  components: { Navigation, ToolBar, Footer },
+  components: { Navigation, ToolBar, FooterBar },
 };
 </script>

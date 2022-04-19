@@ -3,16 +3,23 @@
     <v-navigation-drawer
       v-model="drawer"
       app
-      absolute
+      fixed
       :permanent="!$vuetify.breakpoint.xs"
       :mini-variant="$vuetify.breakpoint.smAndDown"
       class="admin elevation-5"
       width="285"
     >
       <div class="logo pa-3 px-md-9 py-md-5">
-        <v-img contain :src="appLogo" width="120"></v-img>
+        <v-img
+          contain
+          :src="appLogo"
+          width="120"
+        ></v-img>
       </div>
-      <v-list dense nav>
+      <v-list
+        dense
+        nav
+      >
         <v-tooltip
           v-for="item in menu"
           :key="item.link"
@@ -20,7 +27,12 @@
           right
         >
           <template v-slot:activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" v-on="on" link :to="item.link">
+            <v-list-item
+              v-bind="attrs"
+              v-on="on"
+              link
+              :to="item.link"
+            >
               <v-list-item-icon>
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
@@ -40,7 +52,12 @@
       grow
       class="admin-bottom-nav align-center elevation-10"
     >
-      <v-btn v-for="item in menu" :key="item.link" :to="item.link" icon>
+      <v-btn
+        v-for="item in menu"
+        :key="item.link"
+        :to="item.link"
+        icon
+      >
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
     </v-bottom-navigation>
