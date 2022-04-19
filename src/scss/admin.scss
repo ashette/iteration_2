@@ -339,6 +339,36 @@ $admin-font: "Helvetica", sans-serif;
             }
         }
 
+        .v-data-table {
+            border-radius: 0;
+
+            &__wrapper {
+                th {
+                    font-family: $admin-font;
+                    font-size: 12px;
+                    color: var(--v-admin-font-base);
+                    font-weight: 700;
+                    height: 36px;
+                    padding: 0 8px;
+                    border-bottom: 0 !important;
+                }
+
+                td,
+                tr {
+                    font-size: 12px;
+                    color: var(--v-admin-font-base);
+                    height: 36px;
+                    padding: 0 8px;
+                    border-radius: 0 !important;
+                    border-bottom: 0 !important;
+                }
+
+                tr:hover {
+                    background-color: var(--v-admin-background-base) !important;
+                }
+            }
+        }
+
         .admin-toolbar {
             .v-toolbar__content {
                 padding: 0;
@@ -480,7 +510,13 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.login-field-item {
+
+.control-group {
+    max-width: 320px;
+}
+
+.login-field-item,
+.control-group {
     .v-subheader {
         font-family: $admin-font;
         font-size: 11px;
@@ -512,6 +548,7 @@ $admin-font: "Helvetica", sans-serif;
 
     &__container {
         min-height: 390px;
+        min-width: 320px;
         padding: 16px 20px;
         background-color: white;
         border-radius: $border-radius-root;
@@ -723,13 +760,17 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 @media #{map-get($display-breakpoints, 'xs-only')} {
-
     .admin-content {
         padding: 15px 15px 120px;
 
         h1 {
             font-size: 24px;
             margin-bottom: 15px;
+        }
+
+        &__container {
+            min-width: unset;
+            width: 100%;
         }
     }
 

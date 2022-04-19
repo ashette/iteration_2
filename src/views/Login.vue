@@ -2,7 +2,7 @@
   <v-main class="admin">
     <div class="admin-login d-flex flex-column align-center">
       <div class="logo mb-4">
-        <v-img contain src="/img/logo.png"></v-img>
+        <v-img contain src="img/logo.png"></v-img>
       </div>
       <div class="login-form">
         <v-card class="login-form__card" elevation="5">
