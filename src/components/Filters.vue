@@ -1,5 +1,8 @@
 <template>
-  <div v-if="$vuetify.breakpoint.xs" class="admin admin-filters">
+  <div
+    v-if="$vuetify.breakpoint.xs"
+    class="admin admin-filters"
+  >
     <v-btn
       color="tertiary"
       class="admin-filters__mobile-btn"
@@ -26,23 +29,28 @@
         :menu-props="menuProps"
         append-icon="unfold_more"
         item-text="name"
-        item-color="admin-primary"        
+        item-color="admin-primary"
         single-line
         persistent-placeholder
         outlined
       ></v-select>
       <div class="admin-filters__controls ml-auto">
-        <v-btn color="primary" elevation="0">Применить</v-btn>
+        <v-btn
+          color="primary"
+          elevation="0"
+        >Применить</v-btn>
         <v-btn
           color="secondary"
           elevation="0"
           @click="filterDialog = !filterDialog"
-          >Сбросить</v-btn
-        >
+        >Сбросить</v-btn>
       </div>
     </v-navigation-drawer>
   </div>
-  <div v-else class="admin-filters d-flex flex-wrap">
+  <div
+    v-else
+    class="admin-filters d-flex flex-wrap"
+  >
     <v-select
       v-for="filter in filters"
       :key="filter.name"
@@ -52,7 +60,7 @@
       :menu-props="menuProps"
       append-icon="unfold_more"
       item-text="name"
-      item-color="admin-primary"      
+      item-color="admin-primary"
       single-line
       persistent-placeholder
       outlined
@@ -62,9 +70,11 @@
         color="secondary"
         elevation="0"
         @click="filterDialog = !filterDialog"
-        >Сбросить</v-btn
-      >
-      <v-btn color="primary" elevation="0">Применить</v-btn>
+      >Сбросить</v-btn>
+      <v-btn
+        color="primary"
+        elevation="0"
+      >Применить</v-btn>
     </div>
   </div>
 </template>

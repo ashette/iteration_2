@@ -88,7 +88,6 @@ const routes = [
 
 const router = new VueRouter({
   base: location.pathname,
-  // mode: 'history',
   routes
 })
 

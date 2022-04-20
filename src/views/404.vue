@@ -1,7 +1,7 @@
 <template>
-    <v-main>
-      <div>Page not found</div>
-    </v-main>
+  <v-main>
+    <div>Page not found</div>
+  </v-main>
 </template>
 <script>
 export default {
