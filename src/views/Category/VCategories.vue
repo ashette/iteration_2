@@ -5,17 +5,50 @@
       class="admin-content__container d-flex flex-column elevation-5"
       fluid
     >
-      <v-row no-gutters>
-        <div class="admin-filters text-right">
-          <v-btn color="primary" elevation="0" :to="this.$route.path + '/add'">
-            Создать
-          </v-btn>
-        </div>
-      </v-row>
+      <entity-list
+        :items="categories"
+        :headers="headers"
+      >
+        <template v-slot:entityUpdateForm="{editedItem}">
+          <v-card-text>
+            <v-container>
+              <v-row class="d-flex flex-grow-1 flex-column">
+                <v-layout
+                  column
+                  class="control-group flex-grow-0"
+                >
+                  <v-label>
+                    <v-subheader>Название</v-subheader>
+                    <v-text-field
+                      v-model="editedItem.name"
+                      outlined
+                      solo
+                    ></v-text-field>
+                  </v-label>
+                </v-layout>
+                <v-layout
+                  column
+                  class="control-group flex-grow-0"
+                >
+                  <v-label>
+                    <v-subheader>Описание</v-subheader>
+                    <v-textarea
+                      v-model="editedItem.description"
+                      outlined
+                      solo
+                    ></v-textarea>
+                  </v-label>
+                </v-layout>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </template>
+      </entity-list>
 
-      <CategoryList :categories="categories" />
-
-      <v-row class="justify-center flex-grow-0" no-gutters>
+      <v-row
+        class="justify-center flex-grow-0"
+        no-gutters
+      >
         <v-pagination
           v-model="page"
           class="admin-pagination d-flex flex-grow-1"
@@ -31,12 +64,27 @@
 </template>
 
 <script>
-import CategoryList from "@/components/Category/CategoryList";
+import EntityList from "../../components/Entity/EntityList";
 
 export default {
-  components: { CategoryList },
+  components: { EntityList },
   data: () => ({
     page: 1,
+    headers: [
+      {
+        text: "Название",
+        align: "start",
+        sortable: false,
+        value: "name",
+      },
+      {
+        text: "Описание",
+        align: "start",
+        sortable: false,
+        value: "description",
+      },
+      { text: "", value: "actions", align: "end", sortable: false },
+    ],
     categories: [
       {
         name: "Спорт",

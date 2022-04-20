@@ -62,9 +62,23 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.v-application .v-main {
+.v-application .v-main,
+.v-dialog {
     &.admin {
         background-color: var(--v-admin-background-base);
+
+        h1,
+        h2 {
+            font-family: $admin-font;
+            color: var(--v-admin-font-base);
+            letter-spacing: -0.73px;
+            font-weight: normal;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 29px;
+        }
 
         .error--text {
             color: var(--v-admin-error-base) !important;
@@ -348,7 +362,6 @@ $admin-font: "Helvetica", sans-serif;
                     font-size: 12px;
                     color: var(--v-admin-font-base);
                     font-weight: 700;
-                    height: 36px;
                     padding: 0 8px;
                     border-bottom: 0 !important;
                 }
@@ -357,7 +370,6 @@ $admin-font: "Helvetica", sans-serif;
                 tr {
                     font-size: 12px;
                     color: var(--v-admin-font-base);
-                    height: 36px;
                     padding: 0 8px;
                     border-radius: 0 !important;
                     border-bottom: 0 !important;
@@ -366,6 +378,31 @@ $admin-font: "Helvetica", sans-serif;
                 tr:hover {
                     background-color: var(--v-admin-background-base) !important;
                 }
+            }
+
+            &:not(.v-data-table--mobile) &__wrapper {
+                td,
+                tr,
+                th {
+                    height: 36px;
+                }
+            }
+
+            .v-toolbar {
+                height: auto !important;
+
+                &__content {
+                    height: auto !important;
+                    padding: 0;
+                }
+            }
+        }
+
+        .v-card {
+            &__title {
+                font-family: $admin-font;
+                color: var(--v-admin-font-base);
+                font-weight: 700;
             }
         }
 
@@ -442,7 +479,8 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.admin-menu {
+.admin-menu,
+.admin-dialog {
     .v-btn {
         font-family: $admin-font;
         border-radius: 4px;
@@ -532,19 +570,6 @@ $admin-font: "Helvetica", sans-serif;
     padding: 30px 30px 120px;
     max-width: 1980px;
     margin: auto;
-
-    h1,
-    h2 {
-        font-family: $admin-font;
-        color: var(--v-admin-font-base);
-        letter-spacing: -0.73px;
-        font-weight: normal;
-        margin-bottom: 28px;
-    }
-
-    h1 {
-        font-size: 29px;
-    }
 
     &__container {
         min-height: 390px;
