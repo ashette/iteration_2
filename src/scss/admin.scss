@@ -484,6 +484,49 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
+.v-application .v-main {
+    &__wrap {
+        display: flex;
+        flex-direction: column;
+
+        .admin-toolbar {
+            flex-grow: 0;
+            flex-shrink: 0;
+        }
+
+        .admin-content {
+            width: 100%;
+            flex: 1;
+        }
+    }
+}
+.v-application .v-main .admin-error-page {
+    text-align: center;
+
+    h1 {
+        color: var(--v-admin-disabled-base);
+        font-size: 75px;
+        line-height: 90px;
+        margin-bottom: 12px;
+    }
+
+    &__title {
+        font-size: 50px;
+        line-height: 60px;
+        letter-spacing: -2.5px;
+        color: var(--v-admin-font-base);
+        margin-bottom: 16px;
+    }
+
+    &__message {
+        font-family: $admin-font;
+        font-size: 20px;
+        line-height: 23px;
+        letter-spacing: -0.5px;
+        color: var(--v-admin-icon-base);
+        margin-bottom: 36px;
+    }
+}
 .admin-menu,
 .admin-dialog {
     .v-btn {
@@ -786,6 +829,27 @@ $admin-font: "Helvetica", sans-serif;
         flex-grow: 1;
         max-width: unset;
         text-align: right;
+    }
+
+    .v-application .v-main {
+        .admin-error-page {
+            h1 {
+                font-size: 48px;
+                line-height: 50px;
+            }
+
+            &__title {
+                font-size: 24px;
+                line-height: 24px;
+                letter-spacing: 0;
+            }
+
+            &__message {
+                font-family: $admin-font;
+                font-size: 14px;
+                line-height: 23px;
+            }
+        }
     }
 }
 

@@ -1,10 +1,9 @@
 <template>
-  <v-main>
-    <div>Page not found</div>
-  </v-main>
+  <Error :errorCode="404" />
 </template>
 <script>
+import Error from "@/components/Error.vue";
 export default {
-  name: "PageNotFound",
+  components: { Error },
 };
 </script>
