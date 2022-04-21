@@ -23,6 +23,10 @@
                 v-on="on"
               >
                 Создать
+                <v-icon
+                  class="ml-2"
+                  small
+                >add</v-icon>
               </v-btn>
             </template>
             <v-card>
@@ -94,6 +98,7 @@ export default {
   props: {
     items: Array,
     headers: Array,
+    onUpdate: Function,
   },
   components: { ControlButtons },
   data: () => ({

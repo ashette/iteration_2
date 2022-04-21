@@ -13,7 +13,7 @@
       </v-container>
 
       <entity-list
-        :items="filteredPoints"
+        :items="filteredRates"
         :headers="headers"
       >
         <template v-slot:entityUpdateForm="{ editedItem }">
@@ -27,7 +27,7 @@
                   <v-label>
                     <v-subheader>Название</v-subheader>
                     <v-text-field
-                      v-model="editedItem.name"
+                      v-model="editedItem.rateName"
                       outlined
                       solo
                     ></v-text-field>
@@ -38,11 +38,12 @@
                   class="control-group flex-grow-0"
                 >
                   <v-label>
-                    <v-subheader>Город</v-subheader>
+                    <v-subheader>Цена</v-subheader>
                     <v-text-field
-                      v-model="editedItem.cityName"
+                      v-model="editedItem.price"
                       outlined
                       solo
+                      append-icon="currency_ruble"
                     ></v-text-field>
                   </v-label>
                 </v-layout>
@@ -51,9 +52,9 @@
                   class="control-group flex-grow-0"
                 >
                   <v-label>
-                    <v-subheader>Адрес</v-subheader>
+                    <v-subheader>Длительность</v-subheader>
                     <v-textarea
-                      v-model="editedItem.address"
+                      v-model="editedItem.rateUnit"
                       outlined
                       solo
                     ></v-textarea>
@@ -96,31 +97,86 @@ export default {
         text: "Название",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "rateTypeId.name",
       },
       {
-        text: "Город",
+        text: "Длительность",
         align: "start",
         sortable: false,
-        value: "cityId.name",
+        value: "rateTypeId.unit",
       },
       {
-        text: "Адрес",
+        text: "Цена",
         align: "start",
         sortable: false,
-        value: "address",
+        value: "price",
+        width: "10%",
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
-    points: [
+    rates: [
       {
-        name: "Мариинская гимназия",
-        cityId: {
-          name: "Ульяновск",
-          id: "61b30fe9bb7a006c05c54e2b",
+        price: 1000,
+        rateTypeId: {
+          unit: "30 дней",
+          name: "Месячный",
+          id: "6114e4182aed9a0b9b850843",
         },
-        address: "Льва Толстого 62",
-        id: "61b310cfbb7a006c05c54e2c",
+        id: "6259003d73b61100181028d9",
+      },
+      {
+        price: 10,
+        rateTypeId: {
+          unit: "мин",
+          name: "Поминутно",
+          id: "5e26a07f099b810b946c5d82",
+        },
+        id: "62593c9d73b61100181028ed",
+      },
+      {
+        price: 2500,
+        rateTypeId: {
+          unit: "сутки",
+          name: "Суточный",
+          id: "5e26a082099b810b946c5d83",
+        },
+        id: "62593cac73b61100181028ee",
+      },
+      {
+        price: 15000,
+        rateTypeId: {
+          unit: "7 дней",
+          name: "Недельный",
+          id: "5f622f029d3a610b850fd820",
+        },
+        id: "62593cca73b61100181028ef",
+      },
+      {
+        price: 13500,
+        rateTypeId: {
+          name: "Недельный (Акция!)",
+          unit: "7 дней",
+          id: "60b9437e2aed9a0b9b7ed337",
+        },
+        id: "62593cd573b61100181028f0",
+      },
+      {
+        price: 51000,
+        rateTypeId: {
+          name: "3 Месяца",
+          unit: "90 дней",
+          id: "61a4c62105c99b2812794fc3",
+        },
+        id: "62593cf073b61100181028f1",
+      },
+      {
+        price: 200000,
+        rateTypeId: {
+          name: "Годовой",
+          unit: "365 дней",
+          id: "61a4c81c05c99b2812794fcb",
+        },
+        id: "62593d0273b61100181028f2",
       },
     ],
     filters: [
@@ -166,12 +222,13 @@ export default {
     ],
   }),
   computed: {
-    filteredPoints: function () {
-      return this.points.map((point) => {
-        if (point.cityId) {
-          point.cityName = point.cityId.name;
+    filteredRates: function () {
+      return this.rates.map((rate) => {
+        if (rate.rateTypeId) {
+          rate.rateName = rate.rateTypeId.name;
+          rate.rateUnit = rate.rateTypeId.unit;
         }
-        return point;
+        return rate;
       });
     },
   },

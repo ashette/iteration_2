@@ -107,6 +107,10 @@ $admin-font: "Helvetica", sans-serif;
                 color: inherit;
                 max-height: 30px;
             }
+
+            .v-icon {
+                font-size: 20px;
+            }
         }
 
         .v-select {
@@ -222,7 +226,7 @@ $admin-font: "Helvetica", sans-serif;
             }
 
             .v-input__append-inner {
-                margin-top: 4px;
+                margin-top: 0px;
                 align-self: center;
             }
         }
@@ -369,10 +373,11 @@ $admin-font: "Helvetica", sans-serif;
                 td,
                 tr {
                     font-size: 12px;
-                    color: var(--v-admin-font-base);
+                    color: var(--v-admin-icon-base);
                     padding: 0 8px;
                     border-radius: 0 !important;
                     border-bottom: 0 !important;
+                    word-wrap: break-word;
                 }
 
                 tr:hover {
