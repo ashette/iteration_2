@@ -31,7 +31,9 @@
                 <v-icon
                   class="ml-2"
                   small
-                >add</v-icon>
+                >
+                  add
+                </v-icon>
               </v-btn>
               <v-dialog
                 v-model="dialogDelete"
@@ -46,12 +48,16 @@
                       elevation="0"
                       color="tertiary"
                       @click="closeDelete"
-                    >Отменить</v-btn>
+                    >
+                      Отменить
+                    </v-btn>
                     <v-btn
                       elevation="0"
                       color="secondary"
                       @click="deleteItemConfirm"
-                    >Удалить</v-btn>
+                    >
+                      Удалить
+                    </v-btn>
                     <v-spacer></v-spacer>
                   </v-card-actions>
                 </v-card>
@@ -73,8 +79,7 @@
               v-bind:src="`${item.thumbnail.path}`"
               contain
               max-width="140"
-            >
-            </v-img>
+            ></v-img>
           </template>
         </v-data-table>
       </v-container>

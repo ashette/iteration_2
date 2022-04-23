@@ -38,12 +38,16 @@
         <v-btn
           color="primary"
           elevation="0"
-        >Применить</v-btn>
+        >
+          Применить
+        </v-btn>
         <v-btn
           color="secondary"
           elevation="0"
           @click="filterDialog = !filterDialog"
-        >Сбросить</v-btn>
+        >
+          Сбросить
+        </v-btn>
       </div>
     </v-navigation-drawer>
   </div>
@@ -70,11 +74,15 @@
         color="secondary"
         elevation="0"
         @click="filterDialog = !filterDialog"
-      >Сбросить</v-btn>
+      >
+        Сбросить
+      </v-btn>
       <v-btn
         color="primary"
         elevation="0"
-      >Применить</v-btn>
+      >
+        Применить
+      </v-btn>
     </div>
   </div>
 </template>
