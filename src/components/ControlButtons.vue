@@ -53,13 +53,13 @@ export default {
     btnToggleState: [],
   }),
   methods: {
-    onAccept: function () {
+    onAccept() {
       this.$emit("onAccept");
     },
-    onUpdate: function () {
+    onUpdate() {
       this.$emit("onUpdate");
     },
-    onRemove: function () {
+    onRemove() {
       this.$emit("onRemove");
     },
   },

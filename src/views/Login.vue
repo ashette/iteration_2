@@ -48,11 +48,15 @@
                 class="login-control-button"
                 color="primary"
                 text
-              >Запросить доступ</v-btn>
+              >
+                Запросить доступ
+              </v-btn>
               <v-btn
                 class="login-control-button"
                 color="primary"
-              >Войти</v-btn>
+              >
+                Войти
+              </v-btn>
             </v-layout>
           </v-form>
         </v-card>

@@ -13,15 +13,17 @@
         color="primary"
         text
         large
-        to="/"
-      >Главная страница</v-btn>
+      >
+        Главная страница
+      </v-btn>
       <v-btn
         class="px-2"
         color="primary"
         text
         large
-        to="/"
-      >Помощь</v-btn>
+      >
+        Помощь
+      </v-btn>
     </v-col>
     <v-col
       class="text-right admin-footer__copyright"
