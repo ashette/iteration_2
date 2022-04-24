@@ -401,6 +401,22 @@ $admin-font: "Helvetica", sans-serif;
                     padding: 0;
                 }
             }
+
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                width: 5px;
+                height: 5px;
+                background-color: var(--v-admin-disabled-base);
+                border-radius: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background-color: var(--v-admin-disabled-lighten1);
+            }
         }
 
         .v-card {
@@ -786,6 +802,34 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+.table-container {
+    max-height: 500px;
+    overflow: auto;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 0;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        width: 5px;
+        height: 5px;
+        background-color: var(--v-admin-disabled-base);
+        border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--v-admin-disabled-lighten1);
+    }
+
+    .table-row {
+        padding-right: 8px;
+    }
+}
+
 @media #{map-get($display-breakpoints, 'sm-only')} {
     .v-application .v-main {
         &.admin {
@@ -900,5 +944,12 @@ $admin-font: "Helvetica", sans-serif;
     .order-info {
         max-width: unset;
         flex: 50%;
+    }
+}
+
+@media (max-height: map-get($grid-breakpoints, "sm")) {
+    .table-container {
+        max-height: 380px;
+        overflow: auto;
     }
 }

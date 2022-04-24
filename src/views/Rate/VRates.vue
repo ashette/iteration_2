@@ -6,7 +6,7 @@
       fluid
     >
       <v-container
-        class="table-container px-0 flex-grow-0"
+        class="px-0 flex-grow-0"
         fluid
       >
         <filters :filters="filters" />

@@ -13,6 +13,7 @@
         color="primary"
         text
         large
+        to="/"
       >
         Главная страница
       </v-btn>
@@ -21,6 +22,7 @@
         color="primary"
         text
         large
+        to="/"
       >
         Помощь
       </v-btn>
