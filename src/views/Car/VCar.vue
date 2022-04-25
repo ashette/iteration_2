@@ -6,7 +6,7 @@
       fluid
     >
       <v-row class="car-details-page align-start">
-        <v-col class="car-main-info admin-content__container elevation-5 col-md-3 col-lg-5">
+        <v-col class="car-main-info admin-content__container elevation-5 col-12 col-md-3 col-lg-5">
           <v-img
             :src="imageSrc"
             contain
@@ -24,11 +24,11 @@
             {{ car.description }}
           </div>
         </v-col>
-        <v-col class="car-settings admin-content__container elevation-5 flex-grow-1 align-self-stretch">
+        <v-col class="car-settings admin-content__container elevation-5 d-flex flex-column flex-grow-1 align-self-stretch">
           <h2>Настройки автомобиля</h2>
-          <v-form class="car-settings__form">
-            <v-row>
-              <v-col class="col-6">
+          <v-form class="car-settings__form d-flex flex-column flex-grow-1">
+            <v-row class="flex-grow-0">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group flex-grow-0"
@@ -43,22 +43,28 @@
                   </v-label>
                 </v-layout>
               </v-col>
-              <v-col class="col-6">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group flex-grow-0"
                 >
                   <v-label>
                     <v-subheader>Тип автомобиля</v-subheader>
-                    <v-text-field
+                    <v-select
+                      :items="carCategories"
                       v-model="car.categoryId.name"
+                      :menu-props="menuProps"
+                      append-icon="unfold_more"
+                      item-text="name"
+                      item-color="admin-primary"
+                      single-line
+                      persistent-placeholder
                       outlined
-                      solo
-                    ></v-text-field>
+                    ></v-select>
                   </v-label>
                 </v-layout>
               </v-col>
-              <v-col class="col-6">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group flex-grow-0"
@@ -74,7 +80,7 @@
                   </v-label>
                 </v-layout>
               </v-col>
-              <v-col class="col-6">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group flex-grow-0"
@@ -90,7 +96,7 @@
                   </v-label>
                 </v-layout>
               </v-col>
-              <v-col class="col-6">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group flex-grow-0"
@@ -107,7 +113,7 @@
                   </v-label>
                 </v-layout>
               </v-col>
-              <v-col class="col-6">
+              <v-col class="col-12 col-sm-6">
                 <v-layout
                   column
                   class="control-group control-group--with-btn flex-grow-0"
@@ -127,9 +133,9 @@
                       <v-icon>add</v-icon>
                     </v-btn>
                     <v-checkbox
-                      v-for="color in updatedColors"
+                      v-model="selectedColors"
+                      v-for="color in colors"
                       :key="color"
-                      v-model="colors"
                       :value="color"
                       :label="color"
                       on-icon="$vuetify.icon.checkboxAdminOn"
@@ -137,6 +143,31 @@
                     ></v-checkbox>
                   </v-label>
                 </v-layout>
+              </v-col>
+            </v-row>
+            <v-row class="flex-grow-0 mt-auto">
+              <v-col class="d-flex flex-wrap car-settings__controls">
+                <v-btn
+                  class="mr-sm-3"
+                  color="primary"
+                  elevation="0"
+                >
+                  Сохранить
+                </v-btn>
+                <v-btn
+                  class="mr-sm-3"
+                  color="tertiary"
+                  elevation="0"
+                >
+                  Отменить
+                </v-btn>
+                <v-btn
+                  class="ml-sm-auto"
+                  color="secondary"
+                  elevation="0"
+                >
+                  Удалить
+                </v-btn>
               </v-col>
             </v-row>
           </v-form>
@@ -154,7 +185,31 @@ export default {
   data: () => ({
     emptyImg: require("@/assets/no_image.jpg"),
     colors: [],
+    selectedColors: [],
     newColor: "",
+    menuProps: {
+      bottom: true,
+      offsetY: true,
+      tile: true,
+    },
+    carCategories: [
+      {
+        name: "Спорт",
+        description: "Спорт быстро",
+        id: "5fd91add935d4e0be16a3c4b",
+      },
+      {
+        name: "Супер-эконом",
+        description: "Доступные автомобили",
+        id: "600598a3ad015e0bb699774c",
+      },
+      {
+        name: "Люкс",
+        description: "Автомобили премиум класса",
+        id: "60b943492aed9a0b9b7ed335",
+      },
+    ],
+
     car: {
       description: "Это описание автомобиля",
       priceMin: 11000,
@@ -182,12 +237,10 @@ export default {
         return this.emptyImg;
       }
     },
-    updatedColors: function () {
-      return this.car.colors;
-    },
   },
-  mounted() {
+  created() {
     this.colors = this.car.colors;
+    this.selectedColors = this.car.colors;
   },
   methods: {
     addColor(color) {
@@ -195,7 +248,7 @@ export default {
         (item) => item.toLowerCase() === color.toLowerCase()
       );
 
-      if (!similarColors.length && color) {
+      if (similarColors.length == 0 && color) {
         this.colors.push(color);
       }
     },

@@ -73,6 +73,10 @@ $admin-font: "Helvetica", sans-serif;
             letter-spacing: -0.73px;
             font-weight: normal;
             margin-bottom: 28px;
+
+            span {
+                word-break: break-all;
+            }
         }
 
         h1 {
@@ -121,8 +125,6 @@ $admin-font: "Helvetica", sans-serif;
         }
 
         .v-select {
-            max-width: 110px;
-
             .v-input__slot {
                 padding-right: 0 !important;
             }
@@ -164,8 +166,8 @@ $admin-font: "Helvetica", sans-serif;
             }
 
             .checkbox-admin {
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
             }
 
             .v-messages {
@@ -241,7 +243,6 @@ $admin-font: "Helvetica", sans-serif;
                 padding: 0 16px;
 
                 &:hover {
-                    // border-color: var(--v-admin-primary-base);
                     cursor: pointer;
                 }
             }
@@ -734,6 +735,7 @@ $admin-font: "Helvetica", sans-serif;
 
 .car-main-info {
     padding: 40px 22px;
+    min-height: auto;
 
     &__img {
         margin: auto;
@@ -796,6 +798,33 @@ $admin-font: "Helvetica", sans-serif;
     gap: 28px;
 }
 
+.datetime-picker-btn {
+    font-family: $admin-font;
+    border-radius: 4px;
+
+    &.v-btn--text {
+        font-size: 14px;
+        padding: 0;
+
+        &:hover {
+            opacity: 0.7;
+        }
+
+        &::before {
+            display: none;
+        }
+
+        &.primary--text {
+            color: var(--v-admin-primary-base) !important;
+            caret-color: var(--v-admin-primary-base) !important;
+        }
+
+        &.v-size--default {
+            height: 30px;
+        }
+    }
+}
+
 .v-application .admin-filters {
     flex: 1;
     padding: 0 20px 8px 20px;
@@ -804,6 +833,7 @@ $admin-font: "Helvetica", sans-serif;
 
     .v-select {
         margin-bottom: 8px;
+        max-width: 110px;
 
         &:not(:last-child) {
             margin-right: 15px;
@@ -982,6 +1012,20 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+@media (max-width: (map-get($grid-breakpoints, "md") + 100)) {
+    .car-main-info {
+        min-width: 240px;
+    }
+
+    .car-details-page {
+        gap: 16px;
+    }
+
+    .car-settings {
+        min-width: 395px;
+    }
+}
+
 @media #{map-get($display-breakpoints, 'sm-only')} {
     .v-application .v-main {
         &.admin {
@@ -1095,6 +1139,19 @@ $admin-font: "Helvetica", sans-serif;
     .order-info {
         max-width: unset;
         flex: 50%;
+    }
+
+    .car-settings {
+        &__controls {
+            margin-top: 16px;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+
+    .car-settings,
+    .car-main-info {
+        min-width: 280px;
     }
 }
 
