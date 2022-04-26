@@ -1094,11 +1094,22 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 @media #{map-get($display-breakpoints, 'xs-only')} {
+    .v-application .v-main {
+        &.admin {
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+        }
+    }
+    .table-container {
+        max-height: unset;
+        overflow-y: hidden;
+    }
     .admin-content {
         padding: 15px;
-        max-height: calc(100vh - 185px);
+        min-height: calc(100vh - 124px);
         margin: 0;
-        overflow: auto;
 
         &__container {
             flex-grow: 1;
@@ -1107,11 +1118,6 @@ $admin-font: "Helvetica", sans-serif;
             > .table-container + .row {
                 margin-top: auto;
             }
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 15px;
         }
 
         &__container {
@@ -1135,6 +1141,7 @@ $admin-font: "Helvetica", sans-serif;
 
     .admin-footer {
         margin-bottom: 56px;
+        position: static;
 
         &__menu,
         &__copyright {
@@ -1164,12 +1171,5 @@ $admin-font: "Helvetica", sans-serif;
     .car-settings,
     .car-main-info {
         min-width: 280px;
-    }
-}
-
-@media (max-height: map-get($grid-breakpoints, "sm")) {
-    .table-container {
-        max-height: 380px;
-        overflow: auto;
     }
 }
