@@ -62,9 +62,23 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.v-application .v-main {
+.v-application .v-main,
+.v-dialog {
     &.admin {
         background-color: var(--v-admin-background-base);
+
+        h1,
+        h2 {
+            font-family: $admin-font;
+            color: var(--v-admin-font-base);
+            letter-spacing: -0.73px;
+            font-weight: normal;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 29px;
+        }
 
         .error--text {
             color: var(--v-admin-error-base) !important;
@@ -92,6 +106,10 @@ $admin-font: "Helvetica", sans-serif;
             input {
                 color: inherit;
                 max-height: 30px;
+            }
+
+            .v-icon {
+                font-size: 20px;
             }
         }
 
@@ -208,7 +226,7 @@ $admin-font: "Helvetica", sans-serif;
             }
 
             .v-input__append-inner {
-                margin-top: 4px;
+                margin-top: 0px;
                 align-self: center;
             }
         }
@@ -339,6 +357,60 @@ $admin-font: "Helvetica", sans-serif;
             }
         }
 
+        .v-data-table {
+            border-radius: 0;
+
+            &__wrapper {
+                table > thead > tr:last-child > th {
+                    font-family: $admin-font;
+                    font-size: 12px;
+                    color: var(--v-admin-font-base);
+                    font-weight: 700;
+                    padding: 0 8px;
+                    border-bottom: 0;
+                }
+
+                td,
+                tr {
+                    font-size: 12px;
+                    color: var(--v-admin-icon-base);
+                    padding: 0 8px;
+                    border-radius: 0 !important;
+                    border-bottom: 0 !important;
+                    word-wrap: break-word;
+                }
+
+                tr:hover {
+                    background-color: var(--v-admin-background-base) !important;
+                }
+            }
+
+            &:not(.v-data-table--mobile) &__wrapper {
+                td,
+                tr,
+                th {
+                    height: 36px;
+                }
+            }
+
+            .v-toolbar {
+                height: auto !important;
+
+                &__content {
+                    height: auto !important;
+                    padding: 0;
+                }
+            }
+        }
+
+        .v-card {
+            &__title {
+                font-family: $admin-font;
+                color: var(--v-admin-font-base);
+                font-weight: 700;
+            }
+        }
+
         .admin-toolbar {
             .v-toolbar__content {
                 padding: 0;
@@ -412,7 +484,8 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.admin-menu {
+.admin-menu,
+.admin-dialog {
     .v-btn {
         font-family: $admin-font;
         border-radius: 4px;
@@ -480,7 +553,13 @@ $admin-font: "Helvetica", sans-serif;
         }
     }
 }
-.login-field-item {
+
+.control-group {
+    max-width: 320px;
+}
+
+.login-field-item,
+.control-group {
     .v-subheader {
         font-family: $admin-font;
         font-size: 11px;
@@ -497,21 +576,9 @@ $admin-font: "Helvetica", sans-serif;
     max-width: 1980px;
     margin: auto;
 
-    h1,
-    h2 {
-        font-family: $admin-font;
-        color: var(--v-admin-font-base);
-        letter-spacing: -0.73px;
-        font-weight: normal;
-        margin-bottom: 28px;
-    }
-
-    h1 {
-        font-size: 29px;
-    }
-
     &__container {
         min-height: 390px;
+        min-width: 320px;
         padding: 16px 20px;
         background-color: white;
         border-radius: $border-radius-root;
@@ -723,13 +790,17 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 @media #{map-get($display-breakpoints, 'xs-only')} {
-
     .admin-content {
         padding: 15px 15px 120px;
 
         h1 {
             font-size: 24px;
             margin-bottom: 15px;
+        }
+
+        &__container {
+            min-width: unset;
+            width: 100%;
         }
     }
 

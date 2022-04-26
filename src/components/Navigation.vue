@@ -71,7 +71,7 @@ export default {
     mobileLogo: require("@/assets/mobileLogo.svg"),
     drawer: false,
     menu: [
-      { title: "Карточка автомобиля", link: "/admin/car", icon: "edit" },
+      { title: "Карточка автомобиля", link: "/admin/add-car", icon: "edit" },
       { title: "Список авто", link: "/admin/cars", icon: "vertical_split" },
       { title: "Заказы", link: "/admin/orders", icon: "note_add" },
       { title: "Категории", link: "/admin/categories", icon: "grid_view" },

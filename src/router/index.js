@@ -3,11 +3,12 @@ import VueRouter from 'vue-router'
 
 import Login from '../views/Login.vue'
 import AdminOrders from '../views/Orders.vue'
-import CarDetails from '../views/CarDetails.vue'
-import Cars from '../views/Cars.vue'
-import Categories from '../views/Categories.vue'
-import Points from '../views/Points.vue'
-import Rates from '../views/Rates.vue'
+import VCars from '../views/Car/VCars.vue'
+import VCar from '../views/Car/VCar.vue'
+import VNewCar from '../views/Car/VNewCar.vue'
+import VCategories from '../views/Category/VCategories.vue'
+import VPoints from '../views/Point/VPoints.vue'
+import VRates from '../views/Rate/VRates.vue'
 import PageNotFound from '../views/404.vue'
 
 Vue.use(VueRouter)
@@ -26,34 +27,36 @@ const routes = [
     meta: { layout: 'admin', auth: true },
   },
   {
-    path: '/admin/car/',
-    name: 'CarDetails',
-    component: CarDetails,
+    path: '/admin/cars',
+    component: VCars,
     meta: { layout: 'admin', auth: true },
   },
   {
-    path: '/admin/cars',
-    name: 'Cars',
-    component: Cars,
+    path: '/admin/cars/:id',
+    name: 'EditCar',
+    component: VCar,
+    meta: { layout: 'admin', auth: true },
+  },
+  {
+    path: '/admin/add-car/',
+    name: 'AddCar',
+    component: VNewCar,
     meta: { layout: 'admin', auth: true },
   },
   {
     path: '/admin/categories',
-    name: 'Categories',
-    component: Categories,
-    meta: { layout: 'admin', auth: true },
+    component: VCategories,
+    meta: { layout: 'admin', auth: true, title: "Категории" },
   },
   {
     path: '/admin/points',
-    name: 'Points',
-    component: Points,
-    meta: { layout: 'admin', auth: true },
+    component: VPoints,
+    meta: { layout: 'admin', auth: true, title: "Пункты выдачи" },
   },
   {
     path: '/admin/rates',
-    name: 'Rates',
-    component: Rates,
-    meta: { layout: 'admin', auth: true },
+    component: VRates,
+    meta: { layout: 'admin', auth: true, title: "Тарифы" },
   },
   {
     path: '/404',

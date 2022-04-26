@@ -1,6 +1,6 @@
 <template>
   <div class="admin-content">
-    <h1>Карточка автомобиля</h1>
+    <h1>Добавить автомобиль</h1>
   </div>
 </template>
 
