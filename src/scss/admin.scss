@@ -1095,7 +1095,19 @@ $admin-font: "Helvetica", sans-serif;
 
 @media #{map-get($display-breakpoints, 'xs-only')} {
     .admin-content {
-        padding: 15px 15px 120px;
+        padding: 15px;
+        max-height: calc(100vh - 185px);
+        margin: 0;
+        overflow: auto;
+
+        &__container {
+            flex-grow: 1;
+            min-width: unset;
+
+            > .table-container + .row {
+                margin-top: auto;
+            }
+        }
 
         h1 {
             font-size: 24px;
