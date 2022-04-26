@@ -61,7 +61,8 @@ const routes = [
   {
     path: '/404',
     name: '404',
-    component: PageNotFound
+    component: PageNotFound,
+    meta: { layout: 'admin', auth: true },
   },
   {
     path: '*',

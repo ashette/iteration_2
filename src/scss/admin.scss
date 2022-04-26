@@ -401,6 +401,22 @@ $admin-font: "Helvetica", sans-serif;
                     padding: 0;
                 }
             }
+
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                width: 5px;
+                height: 5px;
+                background-color: var(--v-admin-disabled-base);
+                border-radius: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background-color: var(--v-admin-disabled-lighten1);
+            }
         }
 
         .v-card {
@@ -482,6 +498,49 @@ $admin-font: "Helvetica", sans-serif;
             font-size: 14px;
             font-weight: 500;
         }
+    }
+}
+.v-application .v-main {
+    &__wrap {
+        display: flex;
+        flex-direction: column;
+
+        .admin-toolbar {
+            flex-grow: 0;
+            flex-shrink: 0;
+        }
+
+        .admin-content {
+            width: 100%;
+            flex: 1;
+        }
+    }
+}
+.v-application .v-main .admin-error-page {
+    text-align: center;
+
+    h1 {
+        color: var(--v-admin-disabled-base);
+        font-size: 75px;
+        line-height: 90px;
+        margin-bottom: 12px;
+    }
+
+    &__title {
+        font-size: 50px;
+        line-height: 60px;
+        letter-spacing: -2.5px;
+        color: var(--v-admin-font-base);
+        margin-bottom: 16px;
+    }
+
+    &__message {
+        font-family: $admin-font;
+        font-size: 20px;
+        line-height: 23px;
+        letter-spacing: -0.5px;
+        color: var(--v-admin-icon-base);
+        margin-bottom: 36px;
     }
 }
 .admin-menu,
@@ -743,6 +802,34 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+.table-container {
+    max-height: 500px;
+    overflow: auto;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 0;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        width: 5px;
+        height: 5px;
+        background-color: var(--v-admin-disabled-base);
+        border-radius: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: var(--v-admin-disabled-lighten1);
+    }
+
+    .table-row {
+        padding-right: 8px;
+    }
+}
+
 @media #{map-get($display-breakpoints, 'sm-only')} {
     .v-application .v-main {
         &.admin {
@@ -786,6 +873,27 @@ $admin-font: "Helvetica", sans-serif;
         flex-grow: 1;
         max-width: unset;
         text-align: right;
+    }
+
+    .v-application .v-main {
+        .admin-error-page {
+            h1 {
+                font-size: 48px;
+                line-height: 50px;
+            }
+
+            &__title {
+                font-size: 24px;
+                line-height: 24px;
+                letter-spacing: 0;
+            }
+
+            &__message {
+                font-family: $admin-font;
+                font-size: 14px;
+                line-height: 23px;
+            }
+        }
     }
 }
 
@@ -836,5 +944,12 @@ $admin-font: "Helvetica", sans-serif;
     .order-info {
         max-width: unset;
         flex: 50%;
+    }
+}
+
+@media (max-height: map-get($grid-breakpoints, "sm")) {
+    .table-container {
+        max-height: 380px;
+        overflow: auto;
     }
 }
