@@ -11,7 +11,6 @@
     <v-btn
       class="admin-error-page__button"
       color="primary"
-      v-if="error.homepage"
       to="/"
     >
       Назад
@@ -20,6 +19,24 @@
 </template>
 
 <script>
+const TYPES_ERRORS = {
+  400: {
+    title: "Bad request",
+    message: "Попробуйте перезагрузить страницу позже",
+  },
+  403: {
+    title: "Доступ ограничен",
+    message: "Доступ к этой странице ограничен",
+  },
+  404: {
+    title: "Страница не найдена",
+    message: "Похоже, что такой страницы не существует",
+  },
+  500: {
+    title: "Что то пошло не так",
+    message: "Попробуйте перезагрузить страницу",
+  },
+};
 export default {
   props: {
     errorCode: Number,
@@ -29,33 +46,14 @@ export default {
       code: null,
       title: null,
       message: null,
-      homepage: true,
     },
   }),
   mounted() {
     this.error.code = this.errorCode;
-    switch (this.errorCode) {
-      case 400:
-        this.error.title = "Bad request";
-        this.error.message = "Попробуйте перезагрузить страницу позже";
-        break;
-      case 403:
-        this.error.title = "Доступ ограничен";
-        this.error.message = "Доступ к этой странице ограничен";
-        break;
-      case 404:
-        this.error.title = "Страница не найдена";
-        this.error.message = "Похоже, что такой страницы не существует";
-        break;
-      case 500:
-        this.error.title = "Что то пошло не так";
-        this.error.message = "Попробуйте перезагрузить страницу";
-        break;
-      default:
-        this.error.title = "Что то пошло не так";
-        this.error.message = "Попробуйте перезагрузить страницу";
-        break;
-    }
+    this.error = {
+      code: this.errorCode,
+      ...TYPES_ERRORS[this.errorCode],
+    };
   },
 };
 </script>

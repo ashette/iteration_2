@@ -1,34 +1,34 @@
 <template>
   <v-btn-toggle
-    v-model="btnToggleState"
+    v-model="buttonToggleState"
     class="control-buttons"
     multiple
   >
     <v-btn
       v-if="accept"
       class="accept-btn"
-      @click="onAccept"
+      @click="$emit('onAccept')"
     >
       <v-icon color="admin-success">done</v-icon>
-      <span> Готово </span>
+      Готово
     </v-btn>
 
     <v-btn
       v-if="update"
       class="edit-btn"
-      @click="onUpdate"
+      @click="$emit('onUpdate')"
     >
       <v-icon>more_vert</v-icon>
-      <span> Изменить </span>
+      Изменить
     </v-btn>
 
     <v-btn
       v-if="remove"
       class="decline-btn"
-      @click="onRemove"
+      @click="$emit('onRemove')"
     >
       <v-icon color="admin-error">close</v-icon>
-      <span> Удалить </span>
+      Удалить
     </v-btn>
   </v-btn-toggle>
 </template>
@@ -50,23 +50,12 @@ export default {
     },
   },
   data: () => ({
-    btnToggleState: [],
+    buttonToggleState: [],
   }),
-  methods: {
-    onAccept() {
-      this.$emit("onAccept");
-    },
-    onUpdate() {
-      this.$emit("onUpdate");
-    },
-    onRemove() {
-      this.$emit("onRemove");
-    },
-  },
   watch: {
-    btnToggleState(n, o) {
+    buttonToggleState(n, o) {
       if (JSON.stringify(n) == JSON.stringify(o)) return;
-      this.btnToggleState = [];
+      this.buttonToggleState = [];
     },
   },
 };

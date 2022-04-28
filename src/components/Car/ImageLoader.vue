@@ -2,6 +2,7 @@
   <div class="image-loader">
     <div class="image-loader-file-input">
       <v-file-input
+        accept=".jpg,.png,.bmp,.webp"
         prepend-icon=""
         suffix="Обзор"
         placeholder="Выберите файл..."
