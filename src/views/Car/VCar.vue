@@ -24,7 +24,17 @@
             {{ car.description }}
           </div>
         </v-col>
-        <v-col class="car-settings admin-content__container elevation-5 d-flex flex-column flex-grow-1 align-self-stretch">
+        <v-col
+          class="
+            car-settings 
+            admin-content__container 
+            elevation-5 
+            d-flex 
+            flex-column 
+            flex-grow-1 
+            align-self-stretch
+          "
+        >
           <h2>Настройки автомобиля</h2>
           <v-form class="car-settings__form d-flex flex-column flex-grow-1">
             <v-row class="flex-grow-0">
@@ -231,11 +241,7 @@ export default {
   }),
   computed: {
     imageSrc: function () {
-      if (this.car.thumbnail.path) {
-        return this.car.thumbnail.path;
-      } else {
-        return this.emptyImg;
-      }
+      return this.car.thumbnail.path || this.emptyImg;
     },
   },
   created() {
@@ -248,7 +254,7 @@ export default {
         (item) => item.toLowerCase() === color.toLowerCase()
       );
 
-      if (similarColors.length == 0 && color) {
+      if (!similarColors.length && color) {
         this.colors.push(color);
       }
     },

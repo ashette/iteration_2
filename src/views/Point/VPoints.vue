@@ -166,7 +166,7 @@ export default {
     ],
   }),
   computed: {
-    filteredPoints: function () {
+    filteredPoints() {
       return this.points.map((point) => {
         if (point.cityId) {
           point.cityName = point.cityId.name;

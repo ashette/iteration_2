@@ -49,7 +49,6 @@ export default {
     },
   }),
   mounted() {
-    this.error.code = this.errorCode;
     this.error = {
       code: this.errorCode,
       ...TYPES_ERRORS[this.errorCode],

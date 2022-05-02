@@ -49,7 +49,7 @@ export default {
       this.imgLoading = false;
       this.value = 0;
     },
-    async uploadImage(event) {
+    uploadImage(event) {
       if (event) {
         this.imgLoading = true;
         this.$emit("onUpload", event, () => this.iterate());
