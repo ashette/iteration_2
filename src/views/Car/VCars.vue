@@ -2,7 +2,7 @@
   <div class="admin-content">
     <h1>Список автомобилей</h1>
     <v-container
-      class="admin-content__container d-flex flex-column elevation-5"
+      class="admin-content__container d-flex flex-column elevation-5 flex-grow-1"
       fluid
     >
       <v-row
@@ -15,9 +15,22 @@
         class="table-container px-0 flex-grow-1"
         fluid
       >
+        <v-row
+          v-if="isDataRequesting"
+          no-gutters
+          class="justify-center align-center fill-height"
+        >
+          <v-progress-circular
+            indeterminate
+            size="54"
+            color="primary"
+          ></v-progress-circular>
+        </v-row>
         <v-data-table
+          v-else
           :headers="headers"
           :items="cars"
+          loading-text=""
           hide-default-footer
         >
           <template v-slot:top>
@@ -90,11 +103,11 @@
         <v-pagination
           v-model="page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="10"
-          :total-visible="7"
+          :length="paginationLength"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
+          @input="handlePageChange"
         ></v-pagination>
       </v-row>
     </v-container>
@@ -104,37 +117,18 @@
 <script>
 import Filters from "@/components/Filters";
 import ControlButtons from "@/components/ControlButtons";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: { Filters, ControlButtons },
-  methods: {
-    deleteItem(item) {
-      //TODO
-      this.dialogDelete = true;
-    },
-
-    deleteItemConfirm() {
-      //TODO
-      this.closeDelete();
-    },
-    closeDelete() {
-      //TODO
-      this.dialogDelete = false;
-    },
-    editItem(item) {
-      this.$router.push({
-        name: "EditCar",
-        params: {
-          id: item.id,
-          carName: item.name,
-        },
-      });
-    },
-  },
   data: () => ({
     page: 1,
+    pageLimit: 7,
+    pageCount: 0,
     dialog: false,
     dialogDelete: false,
+    filters: [],
+    cars: [],
     headers: [
       {
         text: "Изображение",
@@ -180,67 +174,54 @@ export default {
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
-    filters: [
-      {
-        name: "Модель",
-        values: [
-          {
-            id: 1,
-            name: "Модель1",
-          },
-          {
-            id: 2,
-            name: "Модель2",
-          },
-        ],
-      },
-      {
-        name: "Город",
-        values: [
-          {
-            id: 1,
-            name: "Город1",
-          },
-          {
-            id: 2,
-            name: "Город2",
-          },
-        ],
-      },
-      {
-        name: "Статус",
-        values: [
-          {
-            id: 1,
-            name: "Статус1",
-          },
-          {
-            id: 2,
-            name: "Статус2",
-          },
-        ],
-      },
-    ],
-    cars: [
-      {
-        description: "Это описание автомобиля",
-        priceMin: 11000,
-        priceMax: 12000,
-        name: "Ferrari",
-        number: "m123ss",
-        categoryId: {
-          name: "Спорт",
-          description: "Спорт быстро",
-          id: "5fd91add935d4e0be16a3c4b",
-        },
-        thumbnail: {
-          path: require("@/assets/car.jpg"),
-        },
-        tank: 99,
-        colors: ["оранжевый", "синий"],
-        id: "600fff0bad015e0bb6997d79",
-      },
-    ],
   }),
+  methods: {
+    ...mapActions("Car", ["requestCars"]),
+    async getCars() {
+      const response = await this.requestCars({
+        page: this.page - 1,
+        limit: this.pageLimit,
+      });
+
+      this.cars = response.data;
+      this.pageCount = response.count;
+    },
+    handlePageChange(value) {
+      this.page = value;
+      this.getCars();
+    },
+    deleteItem(item) {
+      //TODO
+      this.dialogDelete = true;
+    },
+
+    deleteItemConfirm() {
+      //TODO
+      this.closeDelete();
+    },
+    closeDelete() {
+      //TODO
+      this.dialogDelete = false;
+    },
+    editItem(item) {
+      this.$router.push({
+        name: "EditCar",
+        params: {
+          id: item.id,
+          carName: item.name,
+        },
+      });
+    },
+  },
+  async mounted() {
+    this.getCars();
+  },
+  computed: {
+    ...mapGetters(["isDataRequesting"]),
+    paginationLength: function () {
+      const length = Math.round(this.pageCount / this.pageLimit);
+      return length > 1 ? length : 1;
+    },
+  },
 };
 </script>

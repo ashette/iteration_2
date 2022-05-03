@@ -73,11 +73,11 @@
         <v-pagination
           v-model="page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="10"
-          :total-visible="7"
+          :length="paginationLength"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
+          @input="handlePageChange"
         ></v-pagination>
       </v-row>
     </v-container>
@@ -87,11 +87,16 @@
 <script>
 import Filters from "../../components/Filters";
 import EntityList from "../../components/Entity/EntityList";
+import { mapActions } from "vuex";
 
 export default {
   components: { Filters, EntityList },
   data: () => ({
     page: 1,
+    pageLimit: 7,
+    pageCount: 0,
+    rates: [],
+    filters: [],
     headers: [
       {
         text: "Название",
@@ -114,113 +119,26 @@ export default {
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
-    rates: [
-      {
-        price: 1000,
-        rateTypeId: {
-          unit: "30 дней",
-          name: "Месячный",
-          id: "6114e4182aed9a0b9b850843",
-        },
-        id: "6259003d73b61100181028d9",
-      },
-      {
-        price: 10,
-        rateTypeId: {
-          unit: "мин",
-          name: "Поминутно",
-          id: "5e26a07f099b810b946c5d82",
-        },
-        id: "62593c9d73b61100181028ed",
-      },
-      {
-        price: 2500,
-        rateTypeId: {
-          unit: "сутки",
-          name: "Суточный",
-          id: "5e26a082099b810b946c5d83",
-        },
-        id: "62593cac73b61100181028ee",
-      },
-      {
-        price: 15000,
-        rateTypeId: {
-          unit: "7 дней",
-          name: "Недельный",
-          id: "5f622f029d3a610b850fd820",
-        },
-        id: "62593cca73b61100181028ef",
-      },
-      {
-        price: 13500,
-        rateTypeId: {
-          name: "Недельный (Акция!)",
-          unit: "7 дней",
-          id: "60b9437e2aed9a0b9b7ed337",
-        },
-        id: "62593cd573b61100181028f0",
-      },
-      {
-        price: 51000,
-        rateTypeId: {
-          name: "3 Месяца",
-          unit: "90 дней",
-          id: "61a4c62105c99b2812794fc3",
-        },
-        id: "62593cf073b61100181028f1",
-      },
-      {
-        price: 200000,
-        rateTypeId: {
-          name: "Годовой",
-          unit: "365 дней",
-          id: "61a4c81c05c99b2812794fcb",
-        },
-        id: "62593d0273b61100181028f2",
-      },
-    ],
-    filters: [
-      {
-        name: "Модель",
-        values: [
-          {
-            id: 1,
-            name: "Модель1",
-          },
-          {
-            id: 2,
-            name: "Модель2",
-          },
-        ],
-      },
-      {
-        name: "Город",
-        values: [
-          {
-            id: 1,
-            name: "Город1",
-          },
-          {
-            id: 2,
-            name: "Город2",
-          },
-        ],
-      },
-      {
-        name: "Статус",
-        values: [
-          {
-            id: 1,
-            name: "Статус1",
-          },
-          {
-            id: 2,
-            name: "Статус2",
-          },
-        ],
-      },
-    ],
   }),
+  async mounted() {
+    this.getRates();
+  },
+  methods: {
+    ...mapActions("Rate", ["requestRates"]),
+    async getRates() {
+      const response = await this.requestRates({
+        page: this.page - 1,
+        limit: this.pageLimit,
+      });
+
+      this.rates = response.data;
+      this.pageCount = response.count;
+    },
+    handlePageChange(value) {
+      this.page = value;
+      this.getRates();
+    },
+  },
   computed: {
     filteredRates: function () {
       return this.rates.map((rate) => {
@@ -230,6 +148,10 @@ export default {
         }
         return rate;
       });
+    },
+    paginationLength: function () {
+      const length = Math.round(this.pageCount / this.pageLimit);
+      return length > 1 ? length : 1;
     },
   },
 };

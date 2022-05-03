@@ -32,6 +32,7 @@ const routes = [
   },
   {
     path: '/admin/orders',
+    name: 'AdminOrders',
     component: VOrders,
     meta: { layout: 'admin', auth: true },
   },

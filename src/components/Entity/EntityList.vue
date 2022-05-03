@@ -3,7 +3,19 @@
     class="table-container px-0 flex-grow-1"
     fluid
   >
+    <v-row
+      v-if="isDataRequesting"
+      no-gutters
+      class="justify-center align-center fill-height"
+    >
+      <v-progress-circular
+        indeterminate
+        size="54"
+        color="primary"
+      ></v-progress-circular>
+    </v-row>
     <v-data-table
+      v-else
       :headers="headers"
       :items="items"
       hide-default-footer
@@ -99,6 +111,7 @@
 
 <script>
 import ControlButtons from "@/components/ControlButtons";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
@@ -155,6 +168,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(["isDataRequesting"]),
     isEdit() {
       return Boolean(this.editedItem.id);
     },

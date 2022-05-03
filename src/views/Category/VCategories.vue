@@ -52,11 +52,11 @@
         <v-pagination
           v-model="page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="10"
-          :total-visible="7"
+          :length="paginationLength"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
+          @input="handlePageChange"
         ></v-pagination>
       </v-row>
     </v-container>
@@ -64,12 +64,16 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import EntityList from "../../components/Entity/EntityList";
 
 export default {
   components: { EntityList },
   data: () => ({
     page: 1,
+    categories: [],
+    pageLimit: 7,
+    pageCount: 0,
     headers: [
       {
         text: "Название",
@@ -85,38 +89,30 @@ export default {
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
-    categories: [
-      {
-        name: "Спорт",
-        description: "Спорт быстро",
-        id: "5fd91add935d4e0be16a3c4b",
-      },
-      {
-        name: "Супер-эконом",
-        description: "Доступные автомобили",
-        id: "600598a3ad015e0bb699774c",
-      },
-      {
-        name: "Люкс",
-        description: "Автомобили премиум класса",
-        id: "60b943492aed9a0b9b7ed335",
-      },
-      {
-        name: "Name",
-        description: "work",
-        id: "60e3221e2aed9a0b9b84fc7a",
-      },
-      {
-        name: "Эконом+",
-        description: "Комфортные машины среднего класса",
-        id: "61027a262aed9a0b9b8500c2",
-      },
-      {
-        name: "Бизнес",
-        description: "Бизнес",
-        id: "611171dd2aed9a0b9b8506f9",
-      },
-    ],
   }),
+  async mounted() {
+    this.getCategories();
+  },
+  methods: {
+    ...mapActions("Category", ["requestCategories"]),
+    async getCategories() {
+      const response = await this.requestCategories({
+        page: this.page - 1,
+        limit: this.pageLimit,
+      });
+      this.categories = response.data;
+      this.pageCount = response.count;
+    },
+    handlePageChange(value) {
+      this.page = value;
+      this.getCategories();
+    },
+  },
+  computed: {
+    paginationLength: function () {
+      const length = Math.round(this.pageCount / this.pageLimit);
+      return length > 1 ? length : 1;
+    },
+  },
 };
 </script>
