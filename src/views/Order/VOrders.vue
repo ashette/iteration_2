@@ -82,6 +82,8 @@
             <control-buttons
               update
               remove
+              @onUpdate="editItem(order)"
+              @onRemove="deleteItem(order)"
             />
           </v-col>
         </v-row>
@@ -100,6 +102,33 @@
           next-icon="keyboard_double_arrow_right"
         ></v-pagination>
       </v-row>
+      <v-dialog
+        v-model="dialogDelete"
+        max-width="320px"
+        content-class="admin"
+      >
+        <v-card>
+          <v-card-title class="justify-center py-5">Удалить заказ?</v-card-title>
+          <v-card-actions class="pb-5">
+            <v-spacer></v-spacer>
+            <v-btn
+              elevation="0"
+              color="tertiary"
+              @click="closeDelete"
+            >
+              Отменить
+            </v-btn>
+            <v-btn
+              elevation="0"
+              color="secondary"
+              @click="deleteItemConfirm"
+            >
+              Удалить
+            </v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -111,6 +140,27 @@ import ControlButtons from "@/components/ControlButtons";
 export default {
   components: { Filters, ControlButtons },
   methods: {
+    deleteItem(item) {
+      //TODO
+      this.dialogDelete = true;
+    },
+
+    deleteItemConfirm() {
+      //TODO
+      this.closeDelete();
+    },
+    closeDelete() {
+      //TODO
+      this.dialogDelete = false;
+    },
+    editItem(item) {
+      this.$router.push({
+        name: "EditOrder",
+        params: {
+          id: item.id,
+        },
+      });
+    },
     getOrderTime(dateFrom, dateTo) {
       const options = {
         year: "numeric",
@@ -134,7 +184,9 @@ export default {
     },
   },
   data: () => ({
-    page: 5,
+    page: 1,
+    dialog: false,
+    dialogDelete: false,
     filters: [
       {
         name: "Модель",

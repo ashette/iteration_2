@@ -67,17 +67,28 @@ $admin-font: "Helvetica", sans-serif;
     &.admin {
         background-color: var(--v-admin-background-base);
 
-        h1,
-        h2 {
+        h1 {
             font-family: $admin-font;
             color: var(--v-admin-font-base);
             letter-spacing: -0.73px;
             font-weight: normal;
             margin-bottom: 28px;
+
+            span {
+                word-break: break-all;
+            }
         }
 
         h1 {
             font-size: 29px;
+        }
+
+        h2 {
+            color: var(--v-admin-font-base);
+            letter-spacing: -0.73px;
+            font-size: 17px;
+            font-weight: 500;
+            margin-bottom: 16px;
         }
 
         .error--text {
@@ -114,8 +125,6 @@ $admin-font: "Helvetica", sans-serif;
         }
 
         .v-select {
-            max-width: 110px;
-
             .v-input__slot {
                 padding-right: 0 !important;
             }
@@ -157,8 +166,8 @@ $admin-font: "Helvetica", sans-serif;
             }
 
             .checkbox-admin {
-                width: 18px;
-                height: 18px;
+                width: 16px;
+                height: 16px;
             }
 
             .v-messages {
@@ -179,10 +188,65 @@ $admin-font: "Helvetica", sans-serif;
             }
         }
 
+        .v-file-input {
+            .v-input__slot {
+                position: relative;
+                padding-right: 70px;
+
+                .v-text-field__slot {
+                    position: static;
+                }
+            }
+        }
+
+        .v-progress-linear {
+            margin-top: 20px;
+            overflow: initial;
+
+            &__content {
+                top: -15px;
+
+                > div {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    color: var(--v-admin-font-lighten1);
+                    font-size: 13px;
+                    font-family: $admin-font;
+                    width: 100%;
+
+                    span {
+                        color: var(--v-admin-font-darken1);
+                    }
+                }
+            }
+
+            > div {
+                border-radius: 8px;
+            }
+        }
+
         .v-text-field {
             &__details {
                 margin-bottom: 0;
             }
+            &__suffix {
+                position: absolute;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                background: var(--v-admin-tertiary-base);
+                right: 0;
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                border: 1px solid var(--v-admin-border-base);
+                padding: 0 16px;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
             .v-input__slot {
                 font-family: $admin-font;
                 min-height: 30px;
@@ -225,9 +289,17 @@ $admin-font: "Helvetica", sans-serif;
                 }
             }
 
-            .v-input__append-inner {
+            .v-input__append-inner,
+            .v-input__prepend-outer {
                 margin-top: 0px;
                 align-self: center;
+            }
+
+            &.v-text-field--outlined .v-label {
+                font-size: 10px;
+                font-family: "Roboto";
+                top: auto;
+                color: var(--v-admin-font-darken1);
             }
         }
 
@@ -277,6 +349,25 @@ $admin-font: "Helvetica", sans-serif;
 
                 &.v-size--large {
                     font-size: 14px;
+                }
+            }
+        }
+
+        .control-group {
+            max-width: 320px;
+
+            &--with-btn {
+                .v-btn {
+                    display: inline-block;
+                    width: 30px;
+                    padding: 0;
+                    margin-left: 8px;
+                    min-width: unset;
+                }
+
+                .v-text-field {
+                    display: inline-block;
+                    width: calc(100% - 38px);
                 }
             }
         }
@@ -497,6 +588,7 @@ $admin-font: "Helvetica", sans-serif;
         .copyright {
             font-size: 14px;
             font-weight: 500;
+            text-align: right;
         }
     }
 }
@@ -613,10 +705,6 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
-.control-group {
-    max-width: 320px;
-}
-
 .login-field-item,
 .control-group {
     .v-subheader {
@@ -631,6 +719,8 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 .admin-content {
+    display: flex;
+    flex-direction: column;
     padding: 30px 30px 120px;
     max-width: 1980px;
     margin: auto;
@@ -644,6 +734,98 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+.car-main-info {
+    padding: 40px 22px;
+    min-height: auto;
+
+    &__img {
+        margin: auto;
+    }
+
+    &__title {
+        text-align: center;
+        font-size: 25px;
+        color: var(--v-admin-font-base);
+        font-family: $admin-font;
+    }
+
+    &__category {
+        line-height: 15px;
+        color: var(--v-admin-font-lighten1);
+        font-size: 13px;
+        text-align: center;
+    }
+
+    &__loader {
+        .v-file-input {
+            max-width: 230px;
+            margin: 10px auto;
+        }
+
+        .image-loader-progress-bar {
+            display: flex;
+            flex-direction: column;
+            margin: 0 -22px;
+            padding: 18px 22px;
+            border-top: 1px solid var(--v-admin-border-base);
+        }
+    }
+
+    &__description {
+        color: var(--v-admin-font-lighten1);
+        font-size: 13px;
+        margin: 0 -22px 22px;
+        padding: 18px 22px 0;
+        border-top: 1px solid var(--v-admin-border-base);
+
+        span {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+    }
+}
+
+.car-settings {
+    min-width: 320px;
+
+    &__form {
+        padding-top: 24px;
+    }
+}
+
+.car-details-page {
+    gap: 28px;
+}
+
+.datetime-picker-btn {
+    font-family: $admin-font;
+    border-radius: 4px;
+
+    &.v-btn--text {
+        font-size: 14px;
+        padding: 0;
+
+        &:hover {
+            opacity: 0.7;
+        }
+
+        &::before {
+            display: none;
+        }
+
+        &.primary--text {
+            color: var(--v-admin-primary-base) !important;
+            caret-color: var(--v-admin-primary-base) !important;
+        }
+
+        &.v-size--default {
+            height: 30px;
+        }
+    }
+}
+
 .v-application .admin-filters {
     flex: 1;
     padding: 0 20px 8px 20px;
@@ -652,6 +834,7 @@ $admin-font: "Helvetica", sans-serif;
 
     .v-select {
         margin-bottom: 8px;
+        max-width: 110px;
 
         &:not(:last-child) {
             margin-right: 15px;
@@ -803,7 +986,7 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 .table-container {
-    max-height: 500px;
+    max-height: 490px;
     overflow: auto;
     margin-top: 8px;
     margin-bottom: 12px;
@@ -835,6 +1018,19 @@ $admin-font: "Helvetica", sans-serif;
     top: 0;
     width: 100%;
     z-index: 999;
+}
+@media (max-width: (map-get($grid-breakpoints, "md") + 100)) {
+    .car-main-info {
+        min-width: 240px;
+    }
+
+    .car-details-page {
+        gap: 16px;
+    }
+
+    .car-settings {
+        min-width: 395px;
+    }
 }
 
 @media #{map-get($display-breakpoints, 'sm-only')} {
@@ -905,16 +1101,33 @@ $admin-font: "Helvetica", sans-serif;
 }
 
 @media #{map-get($display-breakpoints, 'xs-only')} {
+    .v-application .v-main {
+        &.admin {
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+        }
+    }
+    .table-container {
+        max-height: unset;
+        overflow-y: hidden;
+    }
     .admin-content {
-        padding: 15px 15px 120px;
+        padding: 15px;
+        min-height: calc(100vh - 124px);
+        margin: 0;
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 15px;
+        &__container {
+            flex-grow: 1;
+            min-width: unset;
+
+            > .table-container + .row {
+                margin-top: auto;
+            }
         }
 
         &__container {
-            min-width: unset;
             width: 100%;
         }
     }
@@ -935,6 +1148,7 @@ $admin-font: "Helvetica", sans-serif;
 
     .admin-footer {
         margin-bottom: 56px;
+        position: static;
 
         &__menu,
         &__copyright {
@@ -952,11 +1166,17 @@ $admin-font: "Helvetica", sans-serif;
         max-width: unset;
         flex: 50%;
     }
-}
 
-@media (max-height: map-get($grid-breakpoints, "sm")) {
-    .table-container {
-        max-height: 380px;
-        overflow: auto;
+    .car-settings {
+        &__controls {
+            margin-top: 16px;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+
+    .car-settings,
+    .car-main-info {
+        min-width: 280px;
     }
 }

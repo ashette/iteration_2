@@ -3,7 +3,8 @@ import VueRouter from 'vue-router'
 import store from '../store'
 
 import Login from '../views/Login.vue'
-import AdminOrders from '../views/Orders.vue'
+import VOrders from '../views/Order/VOrders.vue'
+import VOrder from '../views/Order/VOrder.vue'
 import VCars from '../views/Car/VCars.vue'
 import VCar from '../views/Car/VCar.vue'
 import VNewCar from '../views/Car/VNewCar.vue'
@@ -31,8 +32,13 @@ const routes = [
   },
   {
     path: '/admin/orders',
-    name: 'AdminOrders',
-    component: AdminOrders,
+    component: VOrders,
+    meta: { layout: 'admin', auth: true },
+  },
+  {
+    path: '/admin/orders/:id',
+    name: 'EditOrder',
+    component: VOrder,
     meta: { layout: 'admin', auth: true },
   },
   {
