@@ -222,7 +222,7 @@ export default {
     ],
   }),
   computed: {
-    filteredRates: function () {
+    filteredRates() {
       return this.rates.map((rate) => {
         if (rate.rateTypeId) {
           rate.rateName = rate.rateTypeId.name;
