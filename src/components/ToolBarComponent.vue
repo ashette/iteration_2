@@ -84,7 +84,7 @@
             d-flex
             flex-column
           ">
-          <v-btn color="secondary">Выйти</v-btn>
+          <v-btn color="secondary" @click="logout">Выйти</v-btn>
         </div>
       </v-card>
     </v-menu>
@@ -96,5 +96,11 @@ export default {
   data: () => ({
     avatar: require("@/assets/user-avatar.jpg"),
   }),
+  methods: {
+    logout() {
+      this.$store.dispatch("Auth/requestLogout");
+      this.$router.push("/login");
+    }
+  }
 };
 </script>

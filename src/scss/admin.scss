@@ -830,6 +830,13 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+.notification-list {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+}
+
 @media #{map-get($display-breakpoints, 'sm-only')} {
     .v-application .v-main {
         &.admin {
