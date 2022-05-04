@@ -12,9 +12,9 @@ export default {
             commit('requestLogin')
 
             try {
-                const response = await MainService.login(username, password)
-                localStorage.setItem('authData', JSON.stringify(response))
-                commit('requestLoginSuccess', response)
+                const authData = await MainService.login(username, password)
+                localStorage.setItem('authData', JSON.stringify(authData))
+                commit('requestLoginSuccess', authData)
             } catch (e) {
                 commit('requestLoginFailed', e)
                 dispatch('Notifications/addNotification', {
