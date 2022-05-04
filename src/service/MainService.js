@@ -20,5 +20,14 @@ export default {
     async getCars(params) {
         const response = await Api.get('/db/car', { params });
         return response.data
+    },
+    async getOrders(params, token) {
+        const response = await Api.get('/db/order', {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            params
+        });
+        return response.data
     }
 }

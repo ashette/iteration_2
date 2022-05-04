@@ -5,6 +5,7 @@ import Category from './entities/category'
 import Point from './entities/point'
 import Rate from './entities/rate'
 import Car from './entities/car'
+import Order from './entities/order'
 import Notifications from './notifications'
 
 Vue.use(Vuex)
@@ -33,6 +34,7 @@ export default new Vuex.Store({
         Category,
         Point,
         Rate,
-        Car
+        Car,
+        Order
     }
 })

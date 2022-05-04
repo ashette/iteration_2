@@ -9,9 +9,9 @@ export default {
                 const response = await MainService.getCars({ page, limit });
                 commit('requestingDataSuccess', {}, { root: true })
                 return response
-            } catch (e) {
-                commit('requestingDataFailed', e, { root: true })
-                throw e
+            } catch (error) {
+                commit('requestingDataFailed', error, { root: true })
+                throw error
             }
         },
     },

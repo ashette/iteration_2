@@ -140,7 +140,7 @@ export default {
     },
   },
   computed: {
-    filteredRates: function () {
+    filteredRates() {
       return this.rates.map((rate) => {
         if (rate.rateTypeId) {
           rate.rateName = rate.rateTypeId.name;
@@ -149,7 +149,7 @@ export default {
         return rate;
       });
     },
-    paginationLength: function () {
+    paginationLength() {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;
     },

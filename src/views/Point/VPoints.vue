@@ -145,7 +145,7 @@ export default {
         return point;
       });
     },
-    paginationLength: function () {
+    paginationLength() {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;
     },
