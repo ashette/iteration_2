@@ -6,7 +6,7 @@
       fluid
     >
       <v-container
-        class="px-0 flex-grow-0"
+        class="pa-0 flex-grow-0"
         fluid
       >
         <filters :filters="filters" />
@@ -166,7 +166,7 @@ export default {
     ],
   }),
   computed: {
-    filteredPoints: function () {
+    filteredPoints() {
       return this.points.map((point) => {
         if (point.cityId) {
           point.cityName = point.cityId.name;

@@ -110,18 +110,15 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    editedIndex: -1,
     editedItem: {},
     defaultItem: {},
   }),
   methods: {
     editItem(item) {
-      this.editedIndex = this.items.indexOf(item);
       this.editedItem = item;
       this.dialog = true;
     },
     deleteItem(item) {
-      this.editedIndex = this.items.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
@@ -135,7 +132,6 @@ export default {
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
       });
     },
 
@@ -143,13 +139,15 @@ export default {
       this.dialogDelete = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
       });
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.items[this.editedIndex], this.editedItem);
+      if (this.isEdit) {
+        const itemIndex = this.items.findIndex(
+          (item) => item.id == this.editedItem.id
+        );
+        Object.assign(this.items[itemIndex], this.editedItem);
       } else {
         // TODO
       }
@@ -157,8 +155,11 @@ export default {
     },
   },
   computed: {
+    isEdit() {
+      return Boolean(this.editedItem.id);
+    },
     formTitle() {
-      return this.editedIndex === -1 ? "Создать" : "Редактировать";
+      return this.isEdit ? "Создать" : "Редактировать";
     },
   },
   watch: {
