@@ -6,7 +6,7 @@
       fluid
     >
       <v-container
-        class="px-0 flex-grow-0"
+        class="pa-0 flex-grow-0"
         fluid
       >
         <filters :filters="filters" />
@@ -222,7 +222,7 @@ export default {
     ],
   }),
   computed: {
-    filteredRates: function () {
+    filteredRates() {
       return this.rates.map((rate) => {
         if (rate.rateTypeId) {
           rate.rateName = rate.rateTypeId.name;

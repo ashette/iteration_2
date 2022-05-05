@@ -28,12 +28,10 @@
       </v-btn>
     </v-col>
     <v-col
-      class="text-right admin-footer__copyright"
+      class="admin-footer__copyright copyright"
       align-self="center"
     >
-      <div class="copyright admin-icon--text">
-        <span>Copyright © 2020 Simbirsoft</span>
-      </div>
+      <span class="admin-icon--text">Copyright © 2020 Simbirsoft</span>
     </v-col>
   </v-footer>
 </template>
