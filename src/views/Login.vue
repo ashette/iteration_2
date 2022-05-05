@@ -107,7 +107,6 @@ export default {
 
       try {
         await this.$store.dispatch("Auth/requestLogin", formData);
-        this.$router.push("/");
       } catch (e) {}
     },
   },

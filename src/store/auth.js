@@ -1,10 +1,11 @@
+import { api } from '@/service/ApiService'
 import MainService from '@/service/MainService'
+import router from '../router'
 
 export default {
     namespaced: true,
     state: {
         authStatus: Boolean(localStorage.getItem('authData')),
-        authData: JSON.parse(localStorage.getItem('authData')) || null,
         isRequesting: false
     },
     actions: {
@@ -13,20 +14,32 @@ export default {
 
             try {
                 const authData = await MainService.login(username, password)
+                api.setAuthToken(authData.accessToken)
                 localStorage.setItem('authData', JSON.stringify(authData))
                 commit('requestLoginSuccess', authData)
-            } catch (e) {
-                commit('requestLoginFailed', e)
+                router.push('/')
+            } catch (error) {
+                commit('requestLoginFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Ошибка авторизации'
                 }, { root: true });
-                throw e
+                throw error
             }
         },
         async requestLogout({ commit }) {
-            commit('requestLogout')
-            localStorage.removeItem('authData')
+            try {
+                const data = await MainService.logout()
+                commit('requestLogout')
+                localStorage.removeItem('authData')
+                router.push('/login')
+            } catch (error) {
+                console.error(error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Не удалось выполнить выход из учетной записи.'
+                }, { root: true });
+            }
         }
     },
     mutations: {
@@ -35,7 +48,6 @@ export default {
         },
         requestLoginSuccess(state, authData) {
             state.authStatus = true
-            state.authData = authData
             state.isRequesting = false
         },
         requestLoginFailed(state, error) {
@@ -44,12 +56,10 @@ export default {
         },
         requestLogout(state) {
             state.authStatus = false
-            state.authData = null
         }
     },
     getters: {
         getAuthStatus: state => state.authStatus,
-        getAuthData: state => state.authData,
         isRequesting: state => state.isRequesting
     }
 }

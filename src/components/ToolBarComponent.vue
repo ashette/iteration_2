@@ -99,7 +99,6 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("Auth/requestLogout");
-      this.$router.push("/login");
     }
   }
 };
