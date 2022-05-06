@@ -1013,6 +1013,13 @@ $admin-font: "Helvetica", sans-serif;
     }
 }
 
+.notification-list {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+}
+
 @media (max-width: (map-get($grid-breakpoints, "md") + 100)) {
     .car-main-info {
         min-width: 240px;
