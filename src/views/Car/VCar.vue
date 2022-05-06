@@ -240,7 +240,7 @@ export default {
     },
   }),
   computed: {
-    imageSrc: function () {
+    imageSrc() {
       return this.car.thumbnail.path || this.emptyImg;
     },
   },
