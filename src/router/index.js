@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
 
 import Login from '../views/Login.vue'
 import VOrders from '../views/Order/VOrders.vue'
@@ -19,11 +20,20 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main' },
+  },
+  {
+    path: '/',
+    redirect: { name: 'AdminOrders' }
+  },
+  {
+    path: '/admin',
+    redirect: { name: 'AdminOrders' }
   },
   {
     path: '/admin/orders',
     component: VOrders,
+    name: 'AdminOrders',
     meta: { layout: 'admin', auth: true },
   },
   {
@@ -79,6 +89,17 @@ const routes = [
 const router = new VueRouter({
   base: location.pathname,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const authStatus = store.getters['Auth/getAuthStatus'];
+  const requireAuth = to.matched.some(record => record.meta.auth)
+
+  if (authStatus) {
+    !requireAuth ? next('/') : next()
+  } else {
+    requireAuth ? next('/login') : next()
+  }
 })
 
 export default router
