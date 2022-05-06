@@ -1019,6 +1019,7 @@ $admin-font: "Helvetica", sans-serif;
     width: 100%;
     z-index: 999;
 }
+
 @media (max-width: (map-get($grid-breakpoints, "md") + 100)) {
     .car-main-info {
         min-width: 240px;

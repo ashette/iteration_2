@@ -99,16 +99,13 @@ export default {
     ...mapGetters("Auth", ["isRequesting"]),
   },
   methods: {
-    async onSubmit() {
+    onSubmit() {
       const formData = {
         username: this.username,
         password: this.password,
       };
 
-      try {
-        await this.$store.dispatch("Auth/requestLogin", formData);
-        this.$router.push("/");
-      } catch (e) {}
+      this.$store.dispatch("Auth/requestLogin", formData);
     },
   },
 };
