@@ -16,7 +16,7 @@
         fluid
       >
         <v-row
-          v-if="isDataRequesting"
+          v-if="isOrderRequesting"
           no-gutters
           class="justify-center align-center fill-height"
         >
@@ -232,11 +232,11 @@ export default {
       return order.carId ? order.carId.thumbnail.path : this.emptyImg;
     },
   },
-  async mounted() {
+  created() {
     this.getOrders();
   },
   computed: {
-    ...mapGetters(["isDataRequesting"]),
+    ...mapGetters("Order", ["isOrderRequesting"]),
     paginationLength() {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;

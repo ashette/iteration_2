@@ -8,6 +8,7 @@
       <entity-list
         :items="categories"
         :headers="headers"
+        :loading="isCategoryRequesting"
       >
         <template v-slot:entityUpdateForm="{editedItem}">
           <v-card-text>
@@ -64,7 +65,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import EntityList from "../../components/Entity/EntityList";
 
 export default {
@@ -90,7 +91,7 @@ export default {
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
-  async mounted() {
+  created() {
     this.getCategories();
   },
   methods: {
@@ -109,6 +110,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("Category", ["isCategoryRequesting"]),
     paginationLength: function () {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;

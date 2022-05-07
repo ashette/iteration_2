@@ -13,8 +13,9 @@
       </v-container>
 
       <entity-list
-        :items="filteredRates"
+        :items="rates"
         :headers="headers"
+        :loading="isRateRequesting"
       >
         <template v-slot:entityUpdateForm="{ editedItem }">
           <v-card-text>
@@ -27,7 +28,7 @@
                   <v-label>
                     <v-subheader>Название</v-subheader>
                     <v-text-field
-                      v-model="editedItem.rateName"
+                      v-model="editedItem.name"
                       outlined
                       solo
                     ></v-text-field>
@@ -54,7 +55,7 @@
                   <v-label>
                     <v-subheader>Длительность</v-subheader>
                     <v-textarea
-                      v-model="editedItem.rateUnit"
+                      v-model="editedItem.unit"
                       outlined
                       solo
                     ></v-textarea>
@@ -87,7 +88,7 @@
 <script>
 import Filters from "../../components/Filters";
 import EntityList from "../../components/Entity/EntityList";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: { Filters, EntityList },
@@ -102,13 +103,13 @@ export default {
         text: "Название",
         align: "start",
         sortable: false,
-        value: "rateTypeId.name",
+        value: "name",
       },
       {
         text: "Длительность",
         align: "start",
         sortable: false,
-        value: "rateTypeId.unit",
+        value: "unit",
       },
       {
         text: "Цена",
@@ -120,19 +121,19 @@ export default {
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
-  async mounted() {
+  created() {
     this.getRates();
   },
   methods: {
     ...mapActions("Rate", ["requestRates"]),
     async getRates() {
-      const response = await this.requestRates({
+      const data = await this.requestRates({
         page: this.page - 1,
         limit: this.pageLimit,
       });
 
-      this.rates = response.data;
-      this.pageCount = response.count;
+      this.rates = data.data;
+      this.pageCount = data.count;
     },
     handlePageChange(value) {
       this.page = value;
@@ -140,15 +141,7 @@ export default {
     },
   },
   computed: {
-    filteredRates() {
-      return this.rates.map((rate) => {
-        if (rate.rateTypeId) {
-          rate.rateName = rate.rateTypeId.name;
-          rate.rateUnit = rate.rateTypeId.unit;
-        }
-        return rate;
-      });
-    },
+    ...mapGetters("Rate", ["isRateRequesting"]),
     paginationLength() {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;

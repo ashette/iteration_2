@@ -16,7 +16,7 @@
         fluid
       >
         <v-row
-          v-if="isDataRequesting"
+          v-if="isCarRequesting"
           no-gutters
           class="justify-center align-center fill-height"
         >
@@ -213,11 +213,11 @@ export default {
       });
     },
   },
-  async mounted() {
+  created() {
     this.getCars();
   },
   computed: {
-    ...mapGetters(["isDataRequesting"]),
+    ...mapGetters("Car", ["isCarRequesting"]),
     paginationLength() {
       const length = Math.round(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;

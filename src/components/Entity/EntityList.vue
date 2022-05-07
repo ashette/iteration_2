@@ -4,7 +4,7 @@
     fluid
   >
     <v-row
-      v-if="isDataRequesting"
+      v-if="loading"
       no-gutters
       class="justify-center align-center fill-height"
     >
@@ -118,6 +118,7 @@ export default {
     items: Array,
     headers: Array,
     onUpdate: Function,
+    loading: Boolean
   },
   components: { ControlButtons },
   data: () => ({

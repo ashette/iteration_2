@@ -122,6 +122,17 @@ $admin-font: "Helvetica", sans-serif;
             .v-icon {
                 font-size: 20px;
             }
+
+            &.v-input--is-disabled {
+                .v-input__slot {
+                    background-color: var(--v-admin-border-lighten1);
+                }
+            }
+
+            .v-progress-linear {
+                margin-top: 0;
+                overflow: hidden;
+            }
         }
 
         .v-select {

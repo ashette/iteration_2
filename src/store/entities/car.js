@@ -2,18 +2,35 @@ import MainService from '@/service/MainService'
 
 export default {
     namespaced: true,
+    state: {
+        isCarRequesting: false,
+    },
     actions: {
-        async requestCars({ commit, dispatch }, { page, limit }) {
-            commit('requestingData', {}, { root: true })
+        async requestCars({ commit }, params) {
+            commit('requestingCars')
             try {
-                const response = await MainService.getCars({ page, limit });
-                commit('requestingDataSuccess', {}, { root: true })
+                const response = await MainService.getCars(params);
+                commit('requestingCarsSuccess')
                 return response
             } catch (error) {
-                commit('requestingDataFailed', error, { root: true })
+                commit('requestingCarsFailed', error)
                 throw error
             }
         },
+    },
+    mutations: {
+        requestingCars(state) {
+            state.isCarRequesting = true
+        },
+        requestingCarsSuccess(state) {
+            state.isCarRequesting = false
+        },
+        requestingCarsFailed(state) {
+            state.isCarRequesting = false
+        }
+    },
+    getters: {
+        isCarRequesting: state => state.isCarRequesting
     },
 
 }

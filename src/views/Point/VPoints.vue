@@ -15,6 +15,7 @@
       <entity-list
         :items="filteredPoints"
         :headers="headers"
+        :loading="isPointRequesting"
       >
         <template v-slot:entityUpdateForm="{ editedItem }">
           <v-card-text>
@@ -86,7 +87,7 @@
 <script>
 import Filters from "../../components/Filters";
 import EntityList from "../../components/Entity/EntityList";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: { Filters, EntityList },
@@ -118,7 +119,7 @@ export default {
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
-  async mounted() {
+  created() {
     this.getPoints();
   },
   methods: {
@@ -137,6 +138,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("Point", ["isPointRequesting"]),
     filteredPoints() {
       return this.points.map((point) => {
         if (point.cityId) {

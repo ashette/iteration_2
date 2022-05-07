@@ -2,19 +2,45 @@ import MainService from '@/service/MainService'
 
 export default {
     namespaced: true,
+    state: {
+        isOrderRequesting: false,
+    },
     actions: {
-        async requestOrders({ commit, dispatch }, { page, limit }) {
-            const auth_token = JSON.parse(localStorage.getItem('authData'))['access_token']
-            commit('requestingData', {}, { root: true })
-            try {                
-                const response = await MainService.getOrders({ page, limit }, auth_token);
-                commit('requestingDataSuccess', {}, { root: true })
+        async requestOrders({ commit }, params) {
+            commit('requestingOrders')
+            try {
+                const response = await MainService.getOrders(params);
+                commit('requestingOrdersSuccess')
                 return response
             } catch (error) {
-                commit('requestingDataFailed', error, { root: true })
+                commit('requestingOrdersFailed', error)
+                throw error
+            }
+        },
+        async requestOrderData({ commit }, orderId, params) {
+            commit('requestingOrders')
+            try {
+                const orderData = await MainService.getOrderData(orderId);
+                commit('requestingOrdersSuccess')
+                return orderData
+            } catch (error) {
+                commit('requestingOrdersFailed', error)
                 throw error
             }
         },
     },
-
+    mutations: {
+        requestingOrders(state) {
+            state.isOrderRequesting = true
+        },
+        requestingOrdersSuccess(state) {
+            state.isOrderRequesting = false
+        },
+        requestingOrdersFailed(state) {
+            state.isOrderRequesting = false
+        }
+    },
+    getters: {
+        isOrderRequesting: state => state.isOrderRequesting
+    },
 }
