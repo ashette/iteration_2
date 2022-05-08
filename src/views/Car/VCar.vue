@@ -1,6 +1,6 @@
 <template>
   <div class="admin-content">
-    <h1>Карточка автомобиля - {{ this.$route.params.carName }} </h1>
+    <h1>Карточка автомобиля - {{ this.$route.params.carName || car.name }} </h1>
     <v-container
       class="d-flex flex-column flex-grow-1"
       fluid
@@ -14,7 +14,7 @@
             class="car-main-info__img"
           ></v-img>
           <div class="car-main-info__title">{{ car.name }}</div>
-          <div class="car-main-info__category">{{ car.categoryId.name }}</div>
+          <div class="car-main-info__category">{{ car.currentCategoryName }}</div>
           <image-loader
             class="car-main-info__loader"
             @onUpload="onUpload"
@@ -24,163 +24,194 @@
             {{ car.description }}
           </div>
         </v-col>
-        <v-col
-          class="
+        <v-col class="
             car-settings 
             admin-content__container 
             elevation-5 
             d-flex 
-            flex-column 
-            flex-grow-1 
-            align-self-stretch
-          "
-        >
+            flex-column  
+          ">
           <h2>Настройки автомобиля</h2>
-          <v-form class="car-settings__form d-flex flex-column flex-grow-1">
-            <v-row class="flex-grow-0">
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Модель автомобиля</v-subheader>
-                    <v-text-field
-                      v-model="car.name"
-                      outlined
-                      solo
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-              </v-col>
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Тип автомобиля</v-subheader>
-                    <v-select
-                      :items="carCategories"
-                      v-model="car.categoryId.name"
-                      :menu-props="menuProps"
-                      append-icon="unfold_more"
-                      item-text="name"
-                      item-color="admin-primary"
-                      single-line
-                      persistent-placeholder
-                      outlined
-                    ></v-select>
-                  </v-label>
-                </v-layout>
-              </v-col>
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Мин. Цена</v-subheader>
-                    <v-text-field
-                      v-model="car.priceMin"
-                      outlined
-                      solo
-                      append-icon="currency_ruble"
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-              </v-col>
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Макс. Цена</v-subheader>
-                    <v-text-field
-                      v-model="car.priceMax"
-                      outlined
-                      solo
-                      append-icon="currency_ruble"
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-              </v-col>
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Тип автомобиля</v-subheader>
-                    <v-text-field
-                      v-model="car.number"
-                      outlined
-                      error
-                      error-messages="Пример ошибки"
-                      solo
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-              </v-col>
-              <v-col class="col-12 col-sm-6">
-                <v-layout
-                  column
-                  class="control-group control-group--with-btn flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Доступные цвета</v-subheader>
-                    <v-text-field
-                      v-model="newColor"
-                      outlined
-                      solo
-                    ></v-text-field>
-                    <v-btn
-                      color="admin-border"
-                      outlined
-                      @click="addColor(newColor)"
+          <ValidationObserver v-slot="{ handleSubmit }">
+            <v-form
+              class="car-settings__form d-flex flex-column"
+              @submit.prevent="handleSubmit(onSubmit)"
+            >
+              <v-row class="flex-grow-0">
+                <v-col class="col-12 col-sm-6">
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Модель автомобиля</v-subheader>
+                      <v-text-field
+                        v-model="car.name"
+                        outlined
+                        solo
+                      ></v-text-field>
+                    </v-label>
+                  </v-layout>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Тип автомобиля</v-subheader>
+                      <v-select
+                        v-model="car.categoryId"
+                        :items="categories"
+                        :menu-props="menuProps"
+                        :loading="isCategoryRequesting"
+                        append-icon="unfold_more"
+                        item-text="name"
+                        item-value="id"
+                        item-color="admin-primary"
+                        single-line
+                        persistent-placeholder
+                        outlined
+                      ></v-select>
+                    </v-label>
+                  </v-layout>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <ValidationProvider
+                    name="Цена"
+                    rules="required|numeric"
+                    v-slot="{ errors }"
+                  >
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
                     >
-                      <v-icon>add</v-icon>
-                    </v-btn>
-                    <v-checkbox
-                      v-model="selectedColors"
-                      v-for="color in colors"
-                      :key="color"
-                      :value="color"
-                      :label="color"
-                      on-icon="$vuetify.icon.checkboxAdminOn"
-                      off-icon="$vuetify.icon.checkboxAdminOff"
-                    ></v-checkbox>
-                  </v-label>
-                </v-layout>
-              </v-col>
-            </v-row>
-            <v-row class="flex-grow-0 mt-auto">
-              <v-col class="d-flex flex-wrap car-settings__controls">
-                <v-btn
-                  class="mr-sm-3"
-                  color="primary"
-                  elevation="0"
-                >
-                  Сохранить
-                </v-btn>
-                <v-btn
-                  class="mr-sm-3"
-                  color="tertiary"
-                  elevation="0"
-                >
-                  Отменить
-                </v-btn>
-                <v-btn
-                  class="ml-sm-auto"
-                  color="secondary"
-                  elevation="0"
-                >
-                  Удалить
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
+                      <v-label>
+                        <v-subheader>Мин. Цена</v-subheader>
+                        <v-text-field
+                          v-model="car.priceMin"
+                          outlined
+                          solo
+                          :error-messages="errors"
+                          append-icon="currency_ruble"
+                        ></v-text-field>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <ValidationProvider
+                    name="Цена"
+                    rules="required|numeric"
+                    v-slot="{ errors }"
+                  >
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Макс. Цена</v-subheader>
+                        <v-text-field
+                          v-model="car.priceMax"
+                          outlined
+                          solo
+                          :error-messages="errors"
+                          append-icon="currency_ruble"
+                        ></v-text-field>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <v-layout
+                    column
+                    class="control-group control-group--with-btn flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Доступные цвета</v-subheader>
+                      <v-text-field
+                        v-model="newColor"
+                        outlined
+                        solo
+                      ></v-text-field>
+                      <v-btn
+                        color="admin-border"
+                        outlined
+                        @click="addColor(newColor)"
+                      >
+                        <v-icon>add</v-icon>
+                      </v-btn>
+                      <v-checkbox
+                        v-model="selectedColors"
+                        v-for="color in colors"
+                        :key="color"
+                        :value="color"
+                        :label="color"
+                        on-icon="$vuetify.icon.checkboxAdminOn"
+                        off-icon="$vuetify.icon.checkboxAdminOff"
+                      ></v-checkbox>
+                    </v-label>
+                  </v-layout>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Описание</v-subheader>
+                      <v-textarea
+                        v-model="newDescription"
+                        :value="car.description"
+                        outlined
+                        solo
+                      ></v-textarea>
+                    </v-label>
+                  </v-layout>
+                </v-col>
+                <v-col class="col-12 col-sm-6">
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Регистрационный номер</v-subheader>
+                      <v-text-field
+                        v-model="car.number"
+                        outlined
+                        solo
+                      ></v-text-field>
+                    </v-label>
+                  </v-layout>
+                </v-col>
+              </v-row>
+              <v-row class="flex-grow-0 mt-auto">
+                <v-col class="d-flex flex-wrap car-settings__controls">
+                  <v-btn
+                    class="mr-sm-3"
+                    color="primary"
+                    elevation="0"
+                  >
+                    Сохранить
+                  </v-btn>
+                  <v-btn
+                    class="mr-sm-3"
+                    color="tertiary"
+                    elevation="0"
+                  >
+                    Отменить
+                  </v-btn>
+                  <v-btn
+                    class="ml-sm-auto"
+                    color="secondary"
+                    elevation="0"
+                  >
+                    Удалить
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-form>
+          </ValidationObserver>
         </v-col>
       </v-row>
     </v-container>
@@ -189,6 +220,7 @@
 
 <script>
 import ImageLoader from "@/components/Car/ImageLoader";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   components: { ImageLoader },
@@ -197,58 +229,39 @@ export default {
     colors: [],
     selectedColors: [],
     newColor: "",
+    newDescription: "",
     menuProps: {
       bottom: true,
       offsetY: true,
       tile: true,
     },
-    carCategories: [
-      {
-        name: "Спорт",
-        description: "Спорт быстро",
-        id: "5fd91add935d4e0be16a3c4b",
-      },
-      {
-        name: "Супер-эконом",
-        description: "Доступные автомобили",
-        id: "600598a3ad015e0bb699774c",
-      },
-      {
-        name: "Люкс",
-        description: "Автомобили премиум класса",
-        id: "60b943492aed9a0b9b7ed335",
-      },
-    ],
-
-    car: {
-      description: "Это описание автомобиля",
-      priceMin: 11000,
-      priceMax: 12000,
-      name: "Ferrari",
-      number: "m123ss",
-      categoryId: {
-        name: "Спорт",
-        description: "Спорт быстро",
-        id: "5fd91add935d4e0be16a3c4b",
-      },
-      thumbnail: {
-        path: require("@/assets/car.jpg"),
-      },
-      tank: 99,
-      colors: ["оранжевый", "синий"],
-      id: "600fff0bad015e0bb6997d79",
-    },
+    categories: [],
+    car: {},
   }),
   computed: {
+    ...mapGetters("Category", ["isCategoryRequesting"]),
     imageSrc() {
-      return this.car.thumbnail.path || this.emptyImg;
+      return this.car.thumbnailPath || this.emptyImg;
     },
   },
   created() {
-    this.colors = this.car.colors;
-    this.selectedColors = this.car.colors;
+    this.getCar(this.$route.params.id);
+    this.getCategories();
   },
   methods: {
+    ...mapActions("Car", ["requestCarData"]),
+    ...mapActions("Category", ["requestCategories"]),
+    async getCar(carId) {
+      const carData = await this.requestCarData(carId);
+      this.car = carData;
+      this.colors = carData.colors;
+      this.selectedColors = carData.colors;
+      this.newDescription = carData.description;
+    },
+    async getCategories() {
+      const { data } = await this.requestCategories();
+      this.categories = data;
+    },
     addColor(color) {
       const similarColors = this.colors.filter(
         (item) => item.toLowerCase() === color.toLowerCase()
@@ -258,13 +271,11 @@ export default {
         this.colors.push(color);
       }
     },
-
     fakeLoading() {
       return new Promise((res) => {
         setTimeout(res, Math.random() * 5000);
       });
     },
-
     async onUpload(file, iterate) {
       const promises = new Array(100)
         .fill(0)

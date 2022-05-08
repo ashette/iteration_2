@@ -110,6 +110,15 @@ $admin-font: "Helvetica", sans-serif;
             }
         }
 
+        .v-alert {
+            padding: 10px 16px;
+
+            &__content {
+                font-size: 13px;
+                font-family: $admin-font;
+            }
+        }
+
         .v-input {
             font-size: 11px;
             color: var(--v-admin-font-base) !important;
@@ -530,6 +539,9 @@ $admin-font: "Helvetica", sans-serif;
         }
 
         .admin-toolbar {
+            & + .notification-list {
+                top: 70px;
+            }
             .v-toolbar__content {
                 padding: 0;
             }
@@ -1028,7 +1040,7 @@ $admin-font: "Helvetica", sans-serif;
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 999;
+    z-index: 200;
 }
 
 @media (max-width: (map-get($grid-breakpoints, "md") + 100)) {

@@ -1,5 +1,5 @@
 import { api } from '@/service/ApiService'
-import { castAuth, castOrder, castRate } from '../helpers';
+import { castAuth, castOrder, castRate, castCar } from '../helpers';
 
 const basicToken = btoa(`${new Date().valueOf().toString()}:${process.env.VUE_APP_SECRET}`)
 export default {
@@ -21,6 +21,18 @@ export default {
         const { data } = await api.client.get('/db/category', { params });
         return data
     },
+    async createCategory(newData, params) {
+        const { data } = await api.client.post(`/db/category`, newData, { params });
+        return data
+    },
+    async updateCategory(id, newData, params) {
+        const { data } = await api.client.put(`/db/category/${id}`, newData, { params });
+        return data
+    },
+    async deleteCategory(id, params) {
+        const { data } = await api.client.delete(`/db/category/${id}`, { params });
+        return data
+    },
     async getPoints(params) {
         const { data } = await api.client.get('/db/point', { params });
         return data
@@ -38,12 +50,16 @@ export default {
         const { data } = await api.client.get('/db/car', { params });
         return data
     },
+    async getCarData(id, params) {
+        const { data } = await api.client.get(`/db/car/${id}`, { params });
+        return castCar(data.data)
+    },
     async getOrders(params) {
         const { data } = await api.client.get('/db/order', { params });
         return data
     },
-    async getOrderData(orderId, params) {
-        const { data } = await api.client.get(`/db/order/${orderId}`, { params });
+    async getOrderData(id, params) {
+        const { data } = await api.client.get(`/db/order/${id}`, { params });
         return castOrder(data.data)
     },
 }

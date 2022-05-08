@@ -8,7 +8,10 @@
       <entity-list
         :items="categories"
         :headers="headers"
-        :loading="isCategoryRequesting"
+        :loading="isRequesting"
+        @onCreate="create"
+        @onUpdate="update"
+        @onRemove="remove"
       >
         <template v-slot:entityUpdateForm="{editedItem}">
           <v-card-text>
@@ -72,7 +75,6 @@ export default {
   components: { EntityList },
   data: () => ({
     page: 1,
-    categories: [],
     pageLimit: 7,
     pageCount: 0,
     headers: [
@@ -95,24 +97,40 @@ export default {
     this.getCategories();
   },
   methods: {
-    ...mapActions("Category", ["requestCategories"]),
+    ...mapActions("Category", [
+      "requestCategories",
+      "createCategory",
+      "updateCategory",
+      "deleteCategory",
+    ]),
     async getCategories() {
       const response = await this.requestCategories({
         page: this.page - 1,
         limit: this.pageLimit,
       });
-      this.categories = response.data;
       this.pageCount = response.count;
     },
     handlePageChange(value) {
       this.page = value;
       this.getCategories();
     },
+    create(category) {
+      console.log("crt", category); //TODO
+      this.createCategory({ category });
+    },
+    update(category) {
+      console.log("upd", category.id, category); //TODO
+      this.updateCategory({ id: category.id, category });
+    },
+    remove(category) {
+      console.log("dlt", category.id, category); //TODO
+      this.deleteCategory(category);
+    },
   },
   computed: {
-    ...mapGetters("Category", ["isCategoryRequesting"]),
-    paginationLength: function () {
-      const length = Math.round(this.pageCount / this.pageLimit);
+    ...mapGetters("Category", ["isRequesting", "categories"]),
+    paginationLength() {
+      const length = Math.ceil(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;
     },
   },

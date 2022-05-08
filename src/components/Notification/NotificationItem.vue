@@ -2,6 +2,7 @@
   <v-alert
     :value="alert"
     :type="notification.type"
+    :icon="notificationIcons[notification.type]"
     dismissible
     close-icon="close"
     tile
@@ -17,6 +18,10 @@ export default {
   data: () => ({
     timeout: null,
     alert: true,
+    notificationIcons: {
+      'success' : 'done',
+      'error' : 'highlight_off',
+    },
   }),
   created() {
     this.timeout = setTimeout(() => {

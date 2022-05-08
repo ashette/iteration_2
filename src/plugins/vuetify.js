@@ -51,6 +51,7 @@ export default new Vuetify({
                     base: '#720C7B',
                     darken1: '#281349'
                 },
+                success: '#0EC261',
                 'admin-primary': {
                     base: '#007BFF'
                 },

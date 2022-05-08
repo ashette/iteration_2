@@ -236,7 +236,7 @@
                 <v-col class="col-12 col-sm-6">
                   <ValidationProvider
                     name="Цена"
-                    rules="required|numeric|min:0"
+                    rules="required|numeric"
                     v-slot="{ errors }"
                   >
                     <v-layout

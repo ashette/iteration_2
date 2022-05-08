@@ -238,7 +238,7 @@ export default {
   computed: {
     ...mapGetters("Order", ["isOrderRequesting"]),
     paginationLength() {
-      const length = Math.round(this.pageCount / this.pageLimit);
+      const length = Math.ceil(this.pageCount / this.pageLimit);
       return length > 1 ? length : 1;
     },
   },

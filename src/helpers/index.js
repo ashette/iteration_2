@@ -31,3 +31,19 @@ export const castRate = (rateData) => {
         unit: rateData.rateTypeId ? rateData.rateTypeId.unit : '',
     }
 }
+
+export const castCar = (carData) => {
+    return {
+        id: carData.id,
+        categoryId: carData.categoryId ? carData.categoryId.id : '',
+        currentCategoryName: carData.categoryId ? carData.categoryId.name : '',
+        description: carData.description,
+        colors: carData.colors,
+        name: carData.name,
+        number: carData.number,
+        priceMax: carData.priceMax,
+        priceMin: carData.priceMin,
+        tank: carData.tank,
+        thumbnailPath: carData.thumbnail ? carData.thumbnail.path : ''
+    }
+}

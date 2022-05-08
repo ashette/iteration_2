@@ -17,6 +17,17 @@ export default {
                 throw error
             }
         },
+        async requestCarData({ commit }, carId, params) {
+            commit('requestingCars')
+            try {
+                const response = await MainService.getCarData(carId, params);
+                commit('requestingCarsSuccess')
+                return response
+            } catch (error) {
+                commit('requestingCarsFailed', error)
+                throw error
+            }
+        },
     },
     mutations: {
         requestingCars(state) {
