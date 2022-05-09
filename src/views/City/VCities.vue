@@ -6,7 +6,7 @@
       fluid
     >
       <entity-list
-        :items="categories"
+        :items="cities"
         :headers="headers"
         :loading="isRequesting"
         @onCreate="create"
@@ -37,19 +37,6 @@
                     </v-label>
                   </v-layout>
                 </ValidationProvider>
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Описание</v-subheader>
-                    <v-textarea
-                      v-model="editedItem.description"
-                      outlined
-                      solo
-                    ></v-textarea>
-                  </v-label>
-                </v-layout>
               </v-row>
             </v-container>
           </v-card-text>
@@ -88,48 +75,42 @@ export default {
         sortable: false,
         value: "name",
       },
-      {
-        text: "Описание",
-        align: "start",
-        sortable: false,
-        value: "description",
-      },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
   created() {
-    this.getCategories();
+    this.getCities();
   },
   methods: {
-    ...mapActions("Category", [
-      "requestCategories",
-      "createCategory",
-      "updateCategory",
-      "deleteCategory",
+    ...mapActions("City", [
+      "requestCities",
+      "createCity",
+      "updateCity",
+      "deleteCity",
       "setCurrentPage",
-      "resetCategories",
+      "resetCities",
     ]),
-    async getCategories() {
-      const response = await this.requestCategories();
+    async getCities() {
+      const response = await this.requestCities();
     },
     handlePageChange(value) {
       this.setCurrentPage(value);
     },
-    create(category) {
-      this.createCategory({ category });
+    create(city) {
+      this.createCity({ city });
     },
-    update(category) {
-      this.updateCategory({ id: category.id, category });
+    update(city) {
+      this.updateCity({ id: city.id, city });
     },
-    remove(category) {
-      this.deleteCategory({ id: category.id });
+    remove(city) {
+      this.deleteCity({ id: city.id });
     },
   },
   computed: {
-    ...mapGetters("Category", ["isRequesting", "categories", "pagination"]),
+    ...mapGetters("City", ["isRequesting", "cities", "pagination"]),
   },
   beforeDestroy() {
-    this.resetCategories();
+    this.resetCities();
   },
 };
 </script>

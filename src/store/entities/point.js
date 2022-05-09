@@ -1,58 +1,151 @@
 import MainService from '@/service/MainService'
 
+const getInitialState = () => {
+    return {
+        isRequesting: false,
+        pagination: {
+            page: 1,
+            limit: 7,
+            length: 1,
+        },
+        points: [],
+    }
+}
 export default {
     namespaced: true,
-    state: {
-        isPointRequesting: false,
-        isCityRequesting: false,
-    },
+    state: getInitialState(),
     actions: {
-        async requestPoints({ commit }, params) {
-            commit('requestingPoints')
+        async requestPoints({ commit, state, dispatch }) {
+            commit('requestPoints')
             try {
-                const response = await MainService.getPoints(params);
-                commit('requestingPointsSuccess')
-                return response
+                const { page, limit } = state.pagination
+                const { data: points, count } = await MainService.getPoints({ page: page - 1, limit });
+                const newLength = Math.ceil(count / limit);
+                commit('setPageLength', newLength)
+                if (newLength < page) {
+                    dispatch('setCurrentPage', page - 1)
+                }
+                commit('requestPointsSuccess', points)
+                return points
             } catch (error) {
-                commit('requestingPointsFailed', error)
+                commit('requestPointsFailed', error)
                 throw error
             }
         },
-        async requestCities({ commit }, params) {
-            commit('requestingCities')
+        async createPoint({ commit, dispatch }, { point, params }) {
+            commit('requestCreatePoint')
             try {
-                const response = await MainService.getCities(params);
-                commit('requestingCitiesSuccess')
+                const response = await MainService.createPoint(point, params);
+                dispatch('requestPoints')
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно добавлено!'
+                }, { root: true });
                 return response
             } catch (error) {
-                commit('requestingCitiesFailed', error)
+                commit('requestCreatePointFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
                 throw error
             }
         },
+        async updatePoint({ commit, dispatch }, { id, point, params }) {
+            commit('requestUpdatePoint')
+            try {
+                const response = await MainService.updatePoint(id, point, params);
+                dispatch('requestPoints')
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно обновлено!'
+                }, { root: true });
+                return response
+            } catch (error) {
+                commit('requestUpdatePointFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
+                throw error
+            }
+        },
+        async deletePoint({ commit, dispatch }, { id, params }) {
+            commit('requestDeletePoint')
+            try {
+                const response = await MainService.deletePoint(id, params);
+                dispatch('requestPoints')
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно удалено!'
+                }, { root: true });
+                return response
+            } catch (error) {
+                commit('requestDeletePointFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
+                throw error
+            }
+        },
+        setCurrentPage({ commit, dispatch }, value) {
+            commit('setPage', value);
+            dispatch('requestPoints')
+        },
+        resetPoints({ commit }) {
+            commit('resetPoints')
+        }
     },
     mutations: {
-        requestingPoints(state) {
-            state.isPointRequesting = true
+        requestPoints(state) {
+            state.isRequesting = true
         },
-        requestingPointsSuccess(state) {
-            state.isPointRequesting = false
+        requestPointsSuccess(state, points) {
+            state.isRequesting = false
+            state.points = points
         },
-        requestingPointsFailed(state) {
-            state.isPointRequesting = false
+        requestPointsFailed(state) {
+            state.isRequesting = false
         },
-        requestingCities(state) {
-            state.isCityRequesting = true
+        requestUpdatePoint(state) {
+            state.isRequesting = true
         },
-        requestingCitiesSuccess(state) {
-            state.isCityRequesting = false
+        requestUpdatePointFailed(state) {
+            state.isRequesting = false
         },
-        requestingCitiesFailed(state) {
-            state.isCityRequesting = false
+        requestCreatePoint(state) {
+            state.isRequesting = true
+        },
+        requestCreatePointFailed(state) {
+            state.isRequesting = false
+        },
+        requestDeletePoint(state) {
+            state.isRequesting = true
+        },
+        requestDeletePointFailed(state) {
+            state.isRequesting = false
+        },
+        setPageLength(state, length) {
+            state.pagination = {
+                ...state.pagination,
+                length
+            }
+        },
+        setPage(state, page) {
+            state.pagination = {
+                ...state.pagination,
+                page
+            }
+        },
+        resetPoints(state) {
+            Object.assign(state, getInitialState())
         }
     },
     getters: {
-        isPointRequesting: state => state.isPointRequesting,
-        isCityRequesting: state => state.isCityRequesting
+        isRequesting: state => state.isRequesting,
+        points: state => state.points,
+        pagination: state => state.pagination
     },
 
 }

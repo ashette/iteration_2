@@ -15,52 +15,69 @@
       <entity-list
         :items="rates"
         :headers="headers"
-        :loading="isRateRequesting"
+        :loading="isRequesting"
+        @onCreate="create"
+        @onUpdate="update"
+        @onRemove="remove"
       >
         <template v-slot:entityUpdateForm="{ editedItem }">
           <v-card-text>
             <v-container>
               <v-row class="d-flex flex-grow-1 flex-column">
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
+                <ValidationProvider
+                  name="Тариф"
+                  rules="required"
+                  v-slot="{ errors }"
                 >
-                  <v-label>
-                    <v-subheader>Название</v-subheader>
-                    <v-text-field
-                      v-model="editedItem.name"
-                      outlined
-                      solo
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Тариф</v-subheader>
+                      <v-select
+                        v-model="editedItem.rateTypeId"
+                        :items="units"
+                        :menu-props="menuProps"
+                        :error-messages="errors"
+                        append-icon="unfold_more"
+                        item-value="id"
+                        item-color="admin-primary"
+                        single-line
+                        persistent-placeholder
+                        outlined
+                      >
+                        <template v-slot:item="{ item }">
+                          {{ getRateText(item) }}
+                        </template>
+                        <template v-slot:selection="{ item }">
+                          {{ getRateText(item) }}
+                        </template>
+                      </v-select>
+                    </v-label>
+                  </v-layout>
+                </ValidationProvider>
+                <ValidationProvider
+                  name="Цена"
+                  rules="required"
+                  v-slot="{ errors }"
                 >
-                  <v-label>
-                    <v-subheader>Цена</v-subheader>
-                    <v-text-field
-                      v-model="editedItem.price"
-                      outlined
-                      solo
-                      append-icon="currency_ruble"
-                    ></v-text-field>
-                  </v-label>
-                </v-layout>
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
-                >
-                  <v-label>
-                    <v-subheader>Длительность</v-subheader>
-                    <v-textarea
-                      v-model="editedItem.unit"
-                      outlined
-                      solo
-                    ></v-textarea>
-                  </v-label>
-                </v-layout>
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Цена</v-subheader>
+                      <v-text-field
+                        v-model="editedItem.price"
+                        :error-messages="errors"
+                        outlined
+                        solo
+                        append-icon="currency_ruble"
+                      ></v-text-field>
+                    </v-label>
+                  </v-layout>
+                </ValidationProvider>
               </v-row>
             </v-container>
           </v-card-text>
@@ -72,9 +89,9 @@
         no-gutters
       >
         <v-pagination
-          v-model="page"
+          v-model="pagination.page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="paginationLength"
+          :length="pagination.length"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
@@ -93,10 +110,11 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   components: { Filters, EntityList },
   data: () => ({
-    page: 1,
-    pageLimit: 7,
-    pageCount: 0,
-    rates: [],
+    menuProps: {
+      bottom: true,
+      offsetY: true,
+      tile: true,
+    },
     filters: [],
     headers: [
       {
@@ -123,29 +141,46 @@ export default {
   }),
   created() {
     this.getRates();
+    this.getUnits();
   },
   methods: {
-    ...mapActions("Rate", ["requestRates"]),
+    ...mapActions("Rate", [
+      "requestRates",
+      "createRate",
+      "updateRate",
+      "deleteRate",
+      "setCurrentPage",
+      "resetRates",
+    ]),
+    ...mapActions("Unit", ["requestAllUnits"]),
     async getRates() {
-      const data = await this.requestRates({
-        page: this.page - 1,
-        limit: this.pageLimit,
-      });
-
-      this.rates = data.data;
-      this.pageCount = data.count;
+      const response = await this.requestRates();
+    },
+    async getUnits() {
+      const response = await this.requestAllUnits();
     },
     handlePageChange(value) {
-      this.page = value;
-      this.getRates();
+      this.setCurrentPage(value);
+    },
+    create(rate) {
+      this.createRate({ rate });
+    },
+    update(rate) {
+      this.updateRate({ id: rate.id, rate });
+    },
+    remove(rate) {
+      this.deleteRate({ id: rate.id });
+    },
+    getRateText(item) {
+      return `${item.name} (${item.unit})`;
     },
   },
   computed: {
-    ...mapGetters("Rate", ["isRateRequesting"]),
-    paginationLength() {
-      const length = Math.round(this.pageCount / this.pageLimit);
-      return length > 1 ? length : 1;
-    },
+    ...mapGetters("Rate", ["isRequesting", "rates", "pagination"]),
+    ...mapGetters("Unit", ["isRequesting", "units"]),
+  },
+  beforeDestroy() {
+    this.resetRates();
   },
 };
 </script>

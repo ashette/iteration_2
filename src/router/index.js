@@ -11,6 +11,8 @@ import VNewCar from '../views/Car/VNewCar.vue'
 import VCategories from '../views/Category/VCategories.vue'
 import VPoints from '../views/Point/VPoints.vue'
 import VRates from '../views/Rate/VRates.vue'
+import VUnits from '../views/Unit/VUnits.vue'
+import VCities from '../views/City/VCities.vue'
 import PageNotFound from '../views/404.vue'
 
 Vue.use(VueRouter)
@@ -66,6 +68,11 @@ const routes = [
     meta: { layout: 'admin', auth: true, title: "Категории" },
   },
   {
+    path: '/admin/cities',
+    component: VCities,
+    meta: { layout: 'admin', auth: true, title: "Города" },
+  },
+  {
     path: '/admin/points',
     component: VPoints,
     meta: { layout: 'admin', auth: true, title: "Пункты выдачи" },
@@ -74,6 +81,11 @@ const routes = [
     path: '/admin/rates',
     component: VRates,
     meta: { layout: 'admin', auth: true, title: "Тарифы" },
+  },
+  {
+    path: '/admin/units',
+    component: VUnits,
+    meta: { layout: 'admin', auth: true, title: "Типы тарифов" },
   },
   {
     path: '/404',

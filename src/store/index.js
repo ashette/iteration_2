@@ -3,7 +3,9 @@ import Vuex from 'vuex'
 import Auth from './auth'
 import Category from './entities/category'
 import Point from './entities/point'
+import City from './entities/city'
 import Rate from './entities/rate'
+import Unit from './entities/unit'
 import Car from './entities/car'
 import Order from './entities/order'
 import Notifications from './notifications'
@@ -42,7 +44,9 @@ export default new Vuex.Store({
         Notifications,
         Category,
         Point,
+        City,
         Rate,
+        Unit,
         Car,
         Order
     }

@@ -6,7 +6,7 @@
       fluid
     >
       <entity-list
-        :items="categories"
+        :items="units"
         :headers="headers"
         :loading="isRequesting"
         @onCreate="create"
@@ -37,19 +37,26 @@
                     </v-label>
                   </v-layout>
                 </ValidationProvider>
-                <v-layout
-                  column
-                  class="control-group flex-grow-0"
+                <ValidationProvider
+                  name="Длительность"
+                  rules="required"
+                  v-slot="{ errors }"
                 >
-                  <v-label>
-                    <v-subheader>Описание</v-subheader>
-                    <v-textarea
-                      v-model="editedItem.description"
-                      outlined
-                      solo
-                    ></v-textarea>
-                  </v-label>
-                </v-layout>
+                  <v-layout
+                    column
+                    class="control-group flex-grow-0"
+                  >
+                    <v-label>
+                      <v-subheader>Длительность</v-subheader>
+                      <v-textarea
+                        v-model="editedItem.unit"
+                        :error-messages="errors"
+                        outlined
+                        solo
+                      ></v-textarea>
+                    </v-label>
+                  </v-layout>
+                </ValidationProvider>
               </v-row>
             </v-container>
           </v-card-text>
@@ -89,47 +96,47 @@ export default {
         value: "name",
       },
       {
-        text: "Описание",
+        text: "Длительность",
         align: "start",
         sortable: false,
-        value: "description",
+        value: "unit",
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
   created() {
-    this.getCategories();
+    this.getUnits();
   },
   methods: {
-    ...mapActions("Category", [
-      "requestCategories",
-      "createCategory",
-      "updateCategory",
-      "deleteCategory",
+    ...mapActions("Unit", [
+      "requestUnits",
+      "createUnit",
+      "updateUnit",
+      "deleteUnit",
       "setCurrentPage",
-      "resetCategories",
+      "resetUnits",
     ]),
-    async getCategories() {
-      const response = await this.requestCategories();
+    async getUnits() {
+      const response = await this.requestUnits();
     },
     handlePageChange(value) {
       this.setCurrentPage(value);
     },
-    create(category) {
-      this.createCategory({ category });
+    create(unit) {
+      this.createUnit({ unit });
     },
-    update(category) {
-      this.updateCategory({ id: category.id, category });
+    update(unit) {
+      this.updateUnit({ id: unit.id, unit });
     },
-    remove(category) {
-      this.deleteCategory({ id: category.id });
+    remove(unit) {
+      this.deleteUnit({ id: unit.id });
     },
   },
   computed: {
-    ...mapGetters("Category", ["isRequesting", "categories", "pagination"]),
+    ...mapGetters("Unit", ["isRequesting", "units", "pagination"]),
   },
   beforeDestroy() {
-    this.resetCategories();
+    this.resetUnits();
   },
 };
 </script>

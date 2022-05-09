@@ -45,32 +45,36 @@
                 </v-icon>
               </v-btn>
             </template>
-            <v-card>
-              <v-card-title class="py-5">{{ formTitle }}</v-card-title>
-              <slot
-                name="entityUpdateForm"
-                :editedItem="editedItem"
-              ></slot>
-              <v-card-actions class="pb-5">
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="tertiary"
-                  elevation="0"
-                  @click="close"
-                >
-                  Отменить
-                </v-btn>
-                <v-btn
-                  color="primary"
-                  elevation="0"
-                  :loading="loading"
-                  :disabled="loading"
-                  @click="save"
-                >
-                  Сохранить
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <ValidationObserver v-slot="{ handleSubmit }">
+              <v-form @submit.prevent="handleSubmit(onSubmit)">
+                <v-card>
+                  <v-card-title class="py-5">{{ formTitle }}</v-card-title>
+                  <slot
+                    name="entityUpdateForm"
+                    :editedItem="editedItem"
+                  ></slot>
+                  <v-card-actions class="pb-5">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="tertiary"
+                      elevation="0"
+                      @click="close"
+                    >
+                      Отменить
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      elevation="0"
+                      :loading="loading"
+                      :disabled="loading"
+                      type="submit"
+                    >
+                      Сохранить
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
+            </ValidationObserver>
           </v-dialog>
           <v-dialog
             v-model="dialogDelete"
@@ -123,7 +127,7 @@ export default {
   props: {
     items: Array,
     headers: Array,
-    loading: Boolean, 
+    loading: Boolean,
   },
   components: { ControlButtons },
   data: () => ({
@@ -143,7 +147,7 @@ export default {
     },
 
     deleteItemConfirm() {
-      this.$emit("onRemove", this.editedItem)
+      this.$emit("onRemove", this.editedItem);
       this.closeDelete();
     },
 
@@ -161,11 +165,11 @@ export default {
       });
     },
 
-    save() {
+    onSubmit() {
       if (this.isEdit) {
-        this.$emit("onUpdate", this.editedItem)
+        this.$emit("onUpdate", this.editedItem);
       } else {
-        this.$emit("onCreate", this.editedItem)
+        this.$emit("onCreate", this.editedItem);
       }
       this.close();
     },

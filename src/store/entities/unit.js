@@ -8,53 +8,53 @@ const getInitialState = () => {
             limit: 7,
             length: 1,
         },
-        rates: [],
+        units: [],
     }
 }
 export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestAllRates({ commit }) {
-            commit('requestRates')
+        async requestAllUnits({ commit }) {
+            commit('requestUnits')
             try {
-                const { data: rates } = await MainService.getRates();
-                commit('requestRatesSuccess', rates)
-                return rates
+                const { data: units } = await MainService.getUnits();
+                commit('requestUnitsSuccess', units)
+                return units
             } catch (error) {
-                commit('requestRatesFailed', error)
+                commit('requestUnitsFailed', error)
                 throw error
             }
         },
-        async requestRates({ commit, state, dispatch }) {
-            commit('requestRates')
+        async requestUnits({ commit, state, dispatch }) {
+            commit('requestUnits')
             try {
                 const { page, limit } = state.pagination
-                const { data: rates, count } = await MainService.getRates({ page: page - 1, limit });
+                const { data: units, count } = await MainService.getUnits({ page: page - 1, limit });
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {
                     dispatch('setCurrentPage', page - 1)
                 }
-                commit('requestRatesSuccess', rates)
-                return rates
+                commit('requestUnitsSuccess', units)
+                return units
             } catch (error) {
-                commit('requestRatesFailed', error)
+                commit('requestUnitsFailed', error)
                 throw error
             }
         },
-        async createRate({ commit, dispatch }, { rate, params }) {
-            commit('requestCreateRate')
+        async createUnit({ commit, dispatch }, { unit, params }) {
+            commit('requestCreateUnit')
             try {
-                const response = await MainService.createRate(rate, params);
-                dispatch('requestRates')
+                const response = await MainService.createUnit(unit, params);
+                dispatch('requestUnits')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно добавлено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestCreateRateFailed', error)
+                commit('requestCreateUnitFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
@@ -62,18 +62,18 @@ export default {
                 throw error
             }
         },
-        async updateRate({ commit, dispatch }, { id, rate, params }) {
-            commit('requestUpdateRate')
+        async updateUnit({ commit, dispatch }, { id, unit, params }) {
+            commit('requestUpdateUnit')
             try {
-                const response = await MainService.updateRate(id, rate, params);
-                dispatch('requestRates')
+                const response = await MainService.updateUnit(id, unit, params);
+                dispatch('requestUnits')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно обновлено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestUpdateRateFailed', error)
+                commit('requestUpdateUnitFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
@@ -81,18 +81,18 @@ export default {
                 throw error
             }
         },
-        async deleteRate({ commit, dispatch }, { id, params }) {
-            commit('requestDeleteRate')
+        async deleteUnit({ commit, dispatch }, { id, params }) {
+            commit('requestDeleteUnit')
             try {
-                const response = await MainService.deleteRate(id, params);
-                dispatch('requestRates')
+                const response = await MainService.deleteUnit(id, params);
+                dispatch('requestUnits')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно удалено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestDeleteRateFailed', error)
+                commit('requestDeleteUnitFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
@@ -102,39 +102,39 @@ export default {
         },
         setCurrentPage({ commit, dispatch }, value) {
             commit('setPage', value);
-            dispatch('requestRates')
+            dispatch('requestUnits')
         },
-        resetRates({ commit }) {
-            commit('resetRates')
+        resetUnits({ commit }) {
+            commit('resetUnits')
         }
     },
     mutations: {
-        requestRates(state) {
+        requestUnits(state) {
             state.isRequesting = true
         },
-        requestRatesSuccess(state, rates) {
+        requestUnitsSuccess(state, units) {
             state.isRequesting = false
-            state.rates = rates
+            state.units = units
         },
-        requestRatesFailed(state) {
+        requestUnitsFailed(state) {
             state.isRequesting = false
         },
-        requestUpdateRate(state) {
+        requestUpdateUnit(state) {
             state.isRequesting = true
         },
-        requestUpdateRateFailed(state) {
+        requestUpdateUnitFailed(state) {
             state.isRequesting = false
         },
-        requestCreateRate(state) {
+        requestCreateUnit(state) {
             state.isRequesting = true
         },
-        requestCreateRateFailed(state) {
+        requestCreateUnitFailed(state) {
             state.isRequesting = false
         },
-        requestDeleteRate(state) {
+        requestDeleteUnit(state) {
             state.isRequesting = true
         },
-        requestDeleteRateFailed(state) {
+        requestDeleteUnitFailed(state) {
             state.isRequesting = false
         },
         setPageLength(state, length) {
@@ -149,13 +149,13 @@ export default {
                 page
             }
         },
-        resetRates(state) {
+        resetUnits(state) {
             Object.assign(state, getInitialState())
         }
     },
     getters: {
         isRequesting: state => state.isRequesting,
-        rates: state => state.rates,
+        units: state => state.units,
         pagination: state => state.pagination
     },
 }

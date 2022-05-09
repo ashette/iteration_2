@@ -1,37 +1,60 @@
 import MainService from '@/service/MainService'
 
+const getInitialState = () => {
+    return {
+        isRequesting: false,
+        pagination: {
+            page: 1,
+            limit: 7,
+            length: 1,
+        },
+        categories: [],
+    }
+}
 export default {
     namespaced: true,
-    state: {
-        isRequesting: false,
-        categories: [],
-    },
+    state: getInitialState(),
     actions: {
-        async requestCategories({ commit }, params) {
-            commit('requesting')
+        async requestAllCategories({ commit }) {
+            commit('requestCategories')
             try {
-                const response = await MainService.getCategories(params);
-                commit('setCategories', response.data)
-                commit('requestingSuccess')
-                return response
+                const { data: categories } = await MainService.getCategories();
+                commit('requestCategoriesSuccess', categories)
+                return categories
             } catch (error) {
-                commit('requestingFailed', error)
+                commit('requestCategoriesFailed', error)
+                throw error
+            }
+        },
+        async requestCategories({ commit, state, dispatch }) {
+            commit('requestCategories')
+            try {
+                const { page, limit } = state.pagination
+                const { data: categories, count } = await MainService.getCategories({ page: page - 1, limit });
+                const newLength = Math.ceil(count / limit);
+                commit('setPageLength', newLength)
+                if (newLength < page) {
+                    dispatch('setCurrentPage', page - 1)
+                }
+                commit('requestCategoriesSuccess', categories)
+                return categories
+            } catch (error) {
+                commit('requestCategoriesFailed', error)
                 throw error
             }
         },
         async createCategory({ commit, dispatch }, { category, params }) {
-            commit('requesting')
+            commit('requestCreateCategory')
             try {
                 const response = await MainService.createCategory(category, params);
-                commit('setCategory', response.data)
-                commit('requestingSuccess')
+                dispatch('requestCategories')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно добавлено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestingFailed', error)
+                commit('requestCreateCategoryFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
@@ -40,18 +63,17 @@ export default {
             }
         },
         async updateCategory({ commit, dispatch }, { id, category, params }) {
-            commit('requesting')
+            commit('requestUpdateCategory')
             try {
                 const response = await MainService.updateCategory(id, category, params);
-                commit('updateCategory', response.data)
-                commit('requestingSuccess')
+                dispatch('requestCategories')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно обновлено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestingFailed', error)
+                commit('requestUpdateCategoryFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
@@ -60,56 +82,80 @@ export default {
             }
         },
         async deleteCategory({ commit, dispatch }, { id, params }) {
-            commit('requesting')
+            commit('requestDeleteCategory')
             try {
                 const response = await MainService.deleteCategory(id, params);
-                commit('removeDeletedCategory', id)
-                commit('requestingSuccess')
+                dispatch('requestCategories')
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно удалено!'
                 }, { root: true });
                 return response
             } catch (error) {
-                commit('requestingFailed', error)
+                commit('requestDeleteCategoryFailed', error)
                 dispatch('Notifications/addNotification', {
                     type: 'error',
                     message: 'Произошла ошибка.'
                 }, { root: true });
                 throw error
             }
+        },
+        setCurrentPage({ commit, dispatch }, value) {
+            commit('setPage', value);
+            dispatch('requestCategories')
+        },
+        resetCategories({ commit }) {
+            commit('resetCategories')
         }
     },
     mutations: {
-        requesting(state) {
+        requestCategories(state) {
             state.isRequesting = true
         },
-        requestingSuccess(state) {
+        requestCategoriesSuccess(state, categories) {
             state.isRequesting = false
-        },
-        requestingFailed(state) {
-            state.isRequesting = false
-        },
-        setCategories(state, categories) {
             state.categories = categories
         },
-        setCategory: (state, category) => {
-            state.categories.push(category)
+        requestCategoriesFailed(state) {
+            state.isRequesting = false
         },
-        updateCategory: (state, category) => {
-            state.categories = state.categories.map(item => {
-                if (item.id == category.id) {
-                    item = category
-                }
-                return item
-            })
+        requestUpdateCategory(state) {
+            state.isRequesting = true
         },
-        removeDeletedCategory: (state, id) => {
-            state.categories = state.categories.filter(item => item.id !== id);
+        requestUpdateCategoryFailed(state) {
+            state.isRequesting = false
+        },
+        requestCreateCategory(state) {
+            state.isRequesting = true
+        },
+        requestCreateCategoryFailed(state) {
+            state.isRequesting = false
+        },
+        requestDeleteCategory(state) {
+            state.isRequesting = true
+        },
+        requestDeleteCategoryFailed(state) {
+            state.isRequesting = false
+        },
+        setPageLength(state, length) {
+            state.pagination = {
+                ...state.pagination,
+                length
+            }
+        },
+        setPage(state, page) {
+            state.pagination = {
+                ...state.pagination,
+                page
+            }
+        },
+        resetCategories(state) {
+            Object.assign(state, getInitialState())
         }
     },
     getters: {
         isRequesting: state => state.isRequesting,
-        categories: state => state.categories
+        categories: state => state.categories,
+        pagination: state => state.pagination
     },
 }
