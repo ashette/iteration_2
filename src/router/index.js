@@ -47,6 +47,7 @@ const routes = [
   },
   {
     path: '/admin/cars',
+    name: 'AdminCars',
     component: VCars,
     meta: { layout: 'admin', auth: true },
   },

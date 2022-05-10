@@ -164,12 +164,12 @@ export default {
       "setCurrentPage",
       "resetPoints",
     ]),
-    ...mapActions("City", ["requestAllCities"]),
+    ...mapActions("City", ["requestCities"]),
     async getPoints() {
       const response = await this.requestPoints();
     },
     async getCities() {
-      const response = await this.requestAllCities();
+      const response = await this.requestCities({limit: null});
     },
     handlePageChange(value) {
       this.setCurrentPage(value);

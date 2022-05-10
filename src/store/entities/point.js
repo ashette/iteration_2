@@ -15,11 +15,16 @@ export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestPoints({ commit, state, dispatch }) {
+        async requestPoints({ commit, state, dispatch }, params = {}) {
             commit('requestPoints')
             try {
                 const { page, limit } = state.pagination
-                const { data: points, count } = await MainService.getPoints({ page: page - 1, limit });
+                const requestParams = { 
+                    page: page - 1,
+                    limit,
+                    ...params 
+                }
+                const { data: points, count } = await MainService.getPoints(requestParams);
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {

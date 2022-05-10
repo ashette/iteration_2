@@ -15,22 +15,16 @@ export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestAllUnits({ commit }) {
-            commit('requestUnits')
-            try {
-                const { data: units } = await MainService.getUnits();
-                commit('requestUnitsSuccess', units)
-                return units
-            } catch (error) {
-                commit('requestUnitsFailed', error)
-                throw error
-            }
-        },
-        async requestUnits({ commit, state, dispatch }) {
+        async requestUnits({ commit, state, dispatch }, params = {}) {
             commit('requestUnits')
             try {
                 const { page, limit } = state.pagination
-                const { data: units, count } = await MainService.getUnits({ page: page - 1, limit });
+                const requestParams = { 
+                    page: page - 1,
+                    limit,
+                    ...params 
+                }
+                const { data: units, count } = await MainService.getUnits(requestParams);
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {

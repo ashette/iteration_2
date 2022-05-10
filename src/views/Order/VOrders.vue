@@ -16,7 +16,7 @@
         fluid
       >
         <v-row
-          v-if="isOrderRequesting"
+          v-if="isRequesting"
           no-gutters
           class="justify-center align-center fill-height"
         >
@@ -105,10 +105,10 @@
         no-gutters
       >
         <v-pagination
-          v-model="page"
+          v-model="pagination.page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="paginationLength"
-          :total-visible="pageLimit"
+          :length="pagination.length"
+          :total-visible="pagination.limit"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
@@ -154,41 +154,48 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   components: { Filters, ControlButtons },
   data: () => ({
-    page: 1,
-    pageLimit: 7,
-    pageCount: 0,
     dialog: false,
     dialogDelete: false,
     filters: [],
-    orders: [],
+    editedItem: {},
+    defaultItem: {},
     emptyImg: require("@/assets/no_image.jpg"),
   }),
+  created() {
+    this.getOrders();
+  },
+  computed: {
+    ...mapGetters("Order", ["isRequesting", "orders", "pagination"]),
+  },
   methods: {
-    ...mapActions("Order", ["requestOrders"]),
+    ...mapActions("Order", [
+      "setCurrentPage",
+      "requestOrders",
+      "deleteOrderFromList",
+      "resetOrders",
+    ]),
     async getOrders() {
-      const response = await this.requestOrders({
-        page: this.page - 1,
-        limit: this.pageLimit,
-      });
-
-      this.orders = response.data;
-      this.pageCount = response.count;
+      const response = await this.requestOrders();
     },
     handlePageChange(value) {
-      this.page = value;
-      this.getOrders();
+      this.setCurrentPage(value);
     },
     deleteItem(item) {
-      //TODO
+      this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
     deleteItemConfirm() {
-      //TODO
-      this.closeDelete();
+      const order = this.editedItem;
+      if (order) {
+        this.deleteOrderFromList({ id: order.id });
+        this.closeDelete();
+      }
     },
     closeDelete() {
-      //TODO
       this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+      });
     },
     editItem(item) {
       this.$router.push({
@@ -232,15 +239,8 @@ export default {
       return order.carId ? order.carId.thumbnail.path : this.emptyImg;
     },
   },
-  created() {
-    this.getOrders();
-  },
-  computed: {
-    ...mapGetters("Order", ["isOrderRequesting"]),
-    paginationLength() {
-      const length = Math.ceil(this.pageCount / this.pageLimit);
-      return length > 1 ? length : 1;
-    },
+  beforeDestroy() {
+    this.resetOrders();
   },
 };
 </script>

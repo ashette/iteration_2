@@ -1,14 +1,22 @@
 <template>
   <div class="image-loader">
     <div class="image-loader-file-input">
-      <v-file-input
-        accept=".jpg,.png,.bmp,.webp"
-        prepend-icon=""
-        suffix="Обзор"
-        placeholder="Выберите файл..."
-        outlined
-        @change="uploadImage"
-      ></v-file-input>
+      <ValidationProvider
+        name="Изображение"
+        rules="required"
+        v-slot="{ errors }"
+      >
+        <v-file-input
+          v-model="path"
+          accept=".jpg,.png"
+          prepend-icon=""
+          :error-messages="errors"
+          suffix="Обзор"
+          placeholder="Выберите файл..."
+          outlined
+          @change="onLoadImage"
+        ></v-file-input>
+      </ValidationProvider>
     </div>
     <div
       v-if="imgLoading"
@@ -32,11 +40,19 @@
 
 <script>
 export default {
+  props: {
+    imagePath: String,
+  },
   data: () => ({
     imgLoading: false,
     bufferValue: 100,
     value: 0,
+    acceptedImageTypes: ["image/jpeg", "image/png"],
+    path: null
   }),
+  created(){
+    this.path = this.imagePath
+  },
   methods: {
     iterate() {
       if (this.bufferValue !== this.value) {
@@ -49,11 +65,14 @@ export default {
       this.imgLoading = false;
       this.value = 0;
     },
-    uploadImage(event) {
+    onLoadImage(event) {
       if (event) {
         this.imgLoading = true;
-        this.$emit("onUpload", event, () => this.iterate());
       }
+
+      this.$emit("onUpload", event, this.acceptedImageTypes, () =>
+        this.iterate()
+      );
     },
   },
 };

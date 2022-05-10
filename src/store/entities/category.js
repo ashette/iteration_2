@@ -15,22 +15,16 @@ export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestAllCategories({ commit }) {
-            commit('requestCategories')
-            try {
-                const { data: categories } = await MainService.getCategories();
-                commit('requestCategoriesSuccess', categories)
-                return categories
-            } catch (error) {
-                commit('requestCategoriesFailed', error)
-                throw error
-            }
-        },
-        async requestCategories({ commit, state, dispatch }) {
+        async requestCategories({ commit, state, dispatch }, params = {}) {
             commit('requestCategories')
             try {
                 const { page, limit } = state.pagination
-                const { data: categories, count } = await MainService.getCategories({ page: page - 1, limit });
+                const requestParams = {
+                    page: page - 1,
+                    limit,
+                    ...params
+                }
+                const { data: categories, count } = await MainService.getCategories(requestParams);
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {

@@ -7,6 +7,7 @@ export const castAuth = (authData) => {
 
 export const castOrder = (orderData) => {
     return {
+        id: orderData.id,
         orderStatusId: orderData.orderStatusId ? orderData.orderStatusId.id : '',
         color: orderData.color,
         cityId: orderData.cityId ? orderData.cityId.id : '',
@@ -36,7 +37,7 @@ export const castCar = (carData) => {
     return {
         id: carData.id,
         categoryId: carData.categoryId ? carData.categoryId.id : '',
-        currentCategoryName: carData.categoryId ? carData.categoryId.name : '',
+        categoryName: carData.categoryId ? carData.categoryId.name : '',
         description: carData.description,
         colors: carData.colors,
         name: carData.name,

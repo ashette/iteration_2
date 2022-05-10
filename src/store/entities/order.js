@@ -1,46 +1,179 @@
 import MainService from '@/service/MainService'
+import router from '@/router'
 
+const getInitialState = () => {
+    return {
+        isRequesting: false,
+        pagination: {
+            page: 1,
+            limit: 7,
+            length: 1,
+        },
+        orders: [],
+        orderData: {}
+    }
+}
 export default {
     namespaced: true,
-    state: {
-        isOrderRequesting: false,
-    },
+    state: getInitialState(),
     actions: {
-        async requestOrders({ commit }, params) {
-            commit('requestingOrders')
+        async requestOrders({ commit, state, dispatch }, params = {}) {
+            commit('requestOrders')
             try {
-                const response = await MainService.getOrders(params);
-                commit('requestingOrdersSuccess')
-                return response
+                const { page, limit } = state.pagination
+                const requestParams = {
+                    page: page - 1,
+                    limit,
+                    ...params
+                }
+                const { data: orders, count } = await MainService.getOrders(requestParams);
+                const newLength = Math.ceil(count / limit);
+                commit('setPageLength', newLength)
+                if (newLength < page) {
+                    dispatch('setCurrentPage', page - 1)
+                }
+                commit('requestOrdersSuccess', orders)
+                return orders
             } catch (error) {
-                commit('requestingOrdersFailed', error)
+                commit('requestOrdersFailed', error)
                 throw error
             }
         },
-        async requestOrderData({ commit }, orderId, params) {
-            commit('requestingOrders')
+        async requestOrderData({ commit }, orderId) {
+            commit('requestOrderData')
             try {
                 const orderData = await MainService.getOrderData(orderId);
-                commit('requestingOrdersSuccess')
+                commit('requestOrderDataSuccess', orderData)
                 return orderData
             } catch (error) {
-                commit('requestingOrdersFailed', error)
+                commit('requestOrderDataFailed', error)
                 throw error
             }
         },
+        async updateOrder({ commit, dispatch }, { id, order, params }) {
+            commit('requestUpdateOrder')
+            try {
+                const response = await MainService.updateOrder(id, order, params);
+                dispatch('requestOrderData', id)
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно обновлено!'
+                }, { root: true });
+                return response
+            } catch (error) {
+                commit('requestUpdateOrderFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
+                throw error
+            }
+        },
+        async deleteOrder({ commit, dispatch }, { id, params }) {
+            commit('requestDeleteOrder')
+            try {
+                const response = await MainService.deleteOrder(id, params);
+                router.push({name: 'AdminOrders'})
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно удалено!'
+                }, { root: true });
+                return response
+            } catch (error) {
+                commit('requestDeleteOrderFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
+                throw error
+            }
+        },
+        async deleteOrderFromList({ commit, dispatch }, { id, params }) {
+            commit('requestDeleteOrder')
+            try {
+                const response = await MainService.deleteOrder(id, params);
+                dispatch('requestOrders')
+                dispatch('Notifications/addNotification', {
+                    type: 'success',
+                    message: 'Успешно удалено!'
+                }, { root: true });
+                return response
+            } catch (error) {
+                commit('requestDeleteOrderFailed', error)
+                dispatch('Notifications/addNotification', {
+                    type: 'error',
+                    message: 'Произошла ошибка.'
+                }, { root: true });
+                throw error
+            }
+        },
+        setCurrentPage({ commit, dispatch }, value) {
+            commit('setPage', value);
+            dispatch('requestOrders')
+        },
+        resetOrders({ commit }) {
+            commit('resetOrders')
+        },
+        resetOrder({ commit }) {
+            commit('resetOrder')
+        }
     },
     mutations: {
-        requestingOrders(state) {
-            state.isOrderRequesting = true
+        requestOrders(state) {
+            state.isRequesting = true
         },
-        requestingOrdersSuccess(state) {
-            state.isOrderRequesting = false
+        requestOrdersSuccess(state, orders) {
+            state.isRequesting = false
+            state.orders = orders
         },
-        requestingOrdersFailed(state) {
-            state.isOrderRequesting = false
+        requestOrdersFailed(state) {
+            state.isRequesting = false
+        },
+        requestOrderData(state) {
+            state.isRequesting = true
+        },
+        requestOrderDataSuccess(state, orderData) {
+            state.isRequesting = false
+            state.orderData = orderData
+        },
+        requestOrderDataFailed(state) {
+            state.isRequesting = false
+        },
+        requestUpdateOrder(state) {
+            state.isRequesting = true
+        },
+        requestUpdateOrderFailed(state) {
+            state.isRequesting = false
+        },
+        requestDeleteOrder(state) {
+            state.isRequesting = true
+        },
+        requestDeleteOrderFailed(state) {
+            state.isRequesting = false
+        },
+        setPageLength(state, length) {
+            state.pagination = {
+                ...state.pagination,
+                length
+            }
+        },
+        setPage(state, page) {
+            state.pagination = {
+                ...state.pagination,
+                page
+            }
+        },
+        resetOrders(state) {
+            Object.assign(state, getInitialState())
+        },
+        resetOrder(state) {
+            state.orderData = {}
         }
     },
     getters: {
-        isOrderRequesting: state => state.isOrderRequesting
+        isRequesting: state => state.isRequesting,
+        orders: state => state.orders,
+        orderData: state => state.orderData,
+        pagination: state => state.pagination
     },
 }

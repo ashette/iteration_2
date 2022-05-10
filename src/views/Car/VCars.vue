@@ -16,7 +16,7 @@
         fluid
       >
         <v-row
-          v-if="isCarRequesting"
+          v-if="isRequesting"
           no-gutters
           class="justify-center align-center fill-height"
         >
@@ -101,9 +101,9 @@
         no-gutters
       >
         <v-pagination
-          v-model="page"
+          v-model="pagination.page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="paginationLength"
+          :length="pagination.length"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
@@ -122,13 +122,11 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   components: { Filters, ControlButtons },
   data: () => ({
-    page: 1,
-    pageLimit: 7,
-    pageCount: 0,
     dialog: false,
     dialogDelete: false,
     filters: [],
-    cars: [],
+    editedItem: {},
+    defaultItem: {},
     headers: [
       {
         text: "Изображение",
@@ -175,33 +173,42 @@ export default {
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
+  created() {
+    this.getCars();
+  },
+  computed: {
+    ...mapGetters("Car", ["isRequesting", "cars", "pagination"]),
+  },
   methods: {
-    ...mapActions("Car", ["requestCars"]),
+    ...mapActions("Car", [
+      "setCurrentPage",
+      "requestCars",
+      "deleteCarFromList",
+      "resetCars",
+    ]),
     async getCars() {
-      const response = await this.requestCars({
-        page: this.page - 1,
-        limit: this.pageLimit,
-      });
-
-      this.cars = response.data;
-      this.pageCount = response.count;
+      const response = await this.requestCars();
     },
     handlePageChange(value) {
-      this.page = value;
-      this.getCars();
+      this.setCurrentPage(value);
     },
     deleteItem(item) {
-      //TODO
+      this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      //TODO
-      this.closeDelete();
+      const car = this.editedItem;
+      if (car) {
+        this.deleteCarFromList({ id: car.id });
+        this.closeDelete();
+      }
     },
     closeDelete() {
-      //TODO
       this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+      });
     },
     editItem(item) {
       this.$router.push({
@@ -213,15 +220,8 @@ export default {
       });
     },
   },
-  created() {
-    this.getCars();
-  },
-  computed: {
-    ...mapGetters("Car", ["isCarRequesting"]),
-    paginationLength() {
-      const length = Math.ceil(this.pageCount / this.pageLimit);
-      return length > 1 ? length : 1;
-    },
+  beforeDestroy() {
+    this.resetCars();
   },
 };
 </script>

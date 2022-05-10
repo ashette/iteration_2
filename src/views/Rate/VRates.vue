@@ -152,12 +152,12 @@ export default {
       "setCurrentPage",
       "resetRates",
     ]),
-    ...mapActions("Unit", ["requestAllUnits"]),
+    ...mapActions("Unit", ["requestUnits"]),
     async getRates() {
       const response = await this.requestRates();
     },
     async getUnits() {
-      const response = await this.requestAllUnits();
+      const response = await this.requestUnits({limit: null});
     },
     handlePageChange(value) {
       this.setCurrentPage(value);

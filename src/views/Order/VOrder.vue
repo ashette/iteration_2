@@ -5,7 +5,6 @@
       class="d-flex flex-column "
       fluid
     >
-
       <v-row>
         <v-col class="car-settings admin-content__container elevation-5 col-12 col-md-8">
           <v-col
@@ -25,81 +24,104 @@
           >
             <v-form
               class="car-settings__form d-flex flex-column flex-grow-1"
-              @submit.prevent="handleSubmit(onSubmit)"
+              @submit.prevent="handleSubmit(update)"
             >
               <v-row class="flex-grow-0">
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Модель автомобиля"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Модель автомобиля</v-subheader>
-                      <v-select
-                        v-model="order.carId"
-                        :items="cars"
-                        :menu-props="menuProps"
-                        append-icon="unfold_more"
-                        item-text="name"
-                        item-value="id"
-                        item-color="admin-primary"
-                        single-line
-                        persistent-placeholder
-                        outlined
-                        :loading="isCarRequesting"
-                      ></v-select>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Модель автомобиля</v-subheader>
+                        <v-select
+                          v-model="order.carId"
+                          :items="cars"
+                          :menu-props="menuProps"
+                          :loading="isCarRequesting"
+                          :disabled="isCarRequesting"
+                          :error-messages="errors"
+                          append-icon="unfold_more"
+                          item-text="name"
+                          item-value="id"
+                          item-color="admin-primary"
+                          single-line
+                          persistent-placeholder
+                          outlined
+                        ></v-select>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Город"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Город</v-subheader>
-                      <v-select
-                        v-model="order.cityId"
-                        :items="cities"
-                        :menu-props="menuProps"
-                        :loading="isCityRequesting"
-                        append-icon="unfold_more"
-                        item-text="name"
-                        item-value="id"
-                        item-color="admin-primary"
-                        single-line
-                        persistent-placeholder
-                        outlined
-                        no-data-text="Городов не найдено"
-                        @input="getPoints"
-                      ></v-select>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Город</v-subheader>
+                        <v-select
+                          v-model="order.cityId"
+                          :items="cities"
+                          :menu-props="menuProps"
+                          :loading="isCityRequesting"
+                          :disabled="isCityRequesting"
+                          :error-messages="errors"
+                          append-icon="unfold_more"
+                          item-text="name"
+                          item-value="id"
+                          item-color="admin-primary"
+                          single-line
+                          persistent-placeholder
+                          outlined
+                          no-data-text="Городов не найдено"
+                          @input="getPoints"
+                        ></v-select>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Пункт выдачи"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Пункт выдачи</v-subheader>
-                      <v-select
-                        v-model="order.pointId"
-                        :items="points"
-                        :menu-props="menuProps"
-                        :loading="isPointRequesting"
-                        append-icon="unfold_more"
-                        item-text="name"
-                        item-value="id"
-                        item-color="admin-primary"
-                        single-line
-                        persistent-placeholder
-                        outlined
-                        :disabled="!hasCity"
-                        no-data-text="Пунктов выдачи не найдено"
-                      ></v-select>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Пункт выдачи</v-subheader>
+                        <v-select
+                          v-model="order.pointId"
+                          :items="points"
+                          :menu-props="menuProps"
+                          :loading="isPointRequesting"
+                          :disabled="!hasCity || isPointRequesting"
+                          :error-messages="errors"
+                          append-icon="unfold_more"
+                          item-text="address"
+                          item-value="id"
+                          item-color="admin-primary"
+                          single-line
+                          persistent-placeholder
+                          outlined
+                          no-data-text="Пунктов выдачи не найдено"
+                        ></v-select>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
                   <v-layout
@@ -108,12 +130,12 @@
                   >
                     <v-label>
                       <v-subheader>Цвет</v-subheader>
-
                       <v-select
                         v-model="order.color"
                         :items="getCarColors"
                         :menu-props="menuProps"
                         :loading="isCarRequesting"
+                        :disabled="isCarRequesting"
                         append-icon="unfold_more"
                         item-text="name"
                         item-color="admin-primary"
@@ -125,113 +147,133 @@
                   </v-layout>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Начало аренды"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Начало аренды</v-subheader>
-                      <v-datetime-picker
-                        v-model="order.dateFrom"
-                        dateFormat="dd.MM.yyyy"
-                        clearText="Очистить"
-                        okText="Применить"
-                        content-class="admin"
-                        :textFieldProps="textProps"
-                        :timePickerProps="{ format: '24hr' }"
-                      >
-                        <template slot="dateIcon"> Дата </template>
-                        <template slot="timeIcon"> Время </template>
-                        <template v-slot:actions="{ parent }">
-                          <v-btn
-                            class="datetime-picker-btn"
-                            color="tertiary"
-                            text
-                            @click.native="parent.clearHandler()"
-                          >
-                            Отмена
-                          </v-btn>
-                          <v-btn
-                            class="datetime-picker-btn"
-                            color="primary"
-                            text
-                            @click="parent.okHandler()"
-                          >
-                            Применить
-                          </v-btn>
-                        </template>
-                      </v-datetime-picker>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Начало аренды</v-subheader>
+                        <v-datetime-picker
+                          v-model="order.dateFrom"
+                          dateFormat="dd.MM.yyyy"
+                          clearText="Очистить"
+                          okText="Применить"
+                          content-class="admin"
+                          :textFieldProps="getTextProps(errors)"
+                          :timePickerProps="{ format: '24hr' }"
+                        >
+                          <template slot="dateIcon"> Дата </template>
+                          <template slot="timeIcon"> Время </template>
+                          <template v-slot:actions="{ parent }">
+                            <v-btn
+                              class="datetime-picker-btn"
+                              color="tertiary"
+                              text
+                              @click.native="parent.clearHandler()"
+                            >
+                              Отмена
+                            </v-btn>
+                            <v-btn
+                              class="datetime-picker-btn"
+                              color="primary"
+                              text
+                              @click="parent.okHandler()"
+                            >
+                              Применить
+                            </v-btn>
+                          </template>
+                        </v-datetime-picker>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Конец аренды"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Конец аренды</v-subheader>
-                      <v-datetime-picker
-                        v-model="order.dateTo"
-                        dateFormat="dd.MM.yyyy"
-                        clearText="Очистить"
-                        okText="Применить"
-                        :textFieldProps="textProps"
-                        :datePickerProps="{ min: dateLimit }"
-                        :timePickerProps="{ format: '24hr' }"
-                      >
-                        <template slot="dateIcon"> Дата </template>
-                        <template slot="timeIcon"> Время </template>
-                        <template v-slot:actions="{ parent }">
-                          <v-btn
-                            class="datetime-picker-btn"
-                            color="tertiary"
-                            text
-                            @click.native="parent.clearHandler()"
-                          >
-                            Отмена
-                          </v-btn>
-                          <v-btn
-                            class="datetime-picker-btn"
-                            color="primary"
-                            text
-                            @click="parent.okHandler()"
-                          >
-                            Применить
-                          </v-btn>
-                        </template>
-                      </v-datetime-picker>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Конец аренды</v-subheader>
+                        <v-datetime-picker
+                          v-model="order.dateTo"
+                          dateFormat="dd.MM.yyyy"
+                          clearText="Очистить"
+                          okText="Применить"
+                          :textFieldProps="getTextProps(errors)"
+                          :datePickerProps="{ min: dateLimit }"
+                          :timePickerProps="{ format: '24hr' }"
+                        >
+                          <template slot="dateIcon"> Дата </template>
+                          <template slot="timeIcon"> Время </template>
+                          <template v-slot:actions="{ parent }">
+                            <v-btn
+                              class="datetime-picker-btn"
+                              color="tertiary"
+                              text
+                              @click.native="parent.clearHandler()"
+                            >
+                              Отмена
+                            </v-btn>
+                            <v-btn
+                              class="datetime-picker-btn"
+                              color="primary"
+                              text
+                              @click="parent.okHandler()"
+                            >
+                              Применить
+                            </v-btn>
+                          </template>
+                        </v-datetime-picker>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
+                  <ValidationProvider
+                    name="Тариф"
+                    rules="required"
+                    v-slot="{ errors }"
                   >
-                    <v-label>
-                      <v-subheader>Тариф</v-subheader>
-                      <v-select
-                        v-model="order.rateId"
-                        :items="rates"
-                        :menu-props="menuProps"
-                        append-icon="unfold_more"
-                        item-value="id"
-                        item-color="admin-primary"
-                        single-line
-                        persistent-placeholder
-                        outlined
-                        :loading="isRateRequesting"
-                      >
-                        <template v-slot:item="{ item }">
-                          {{ getRateText(item) }}
-                        </template>
-                        <template v-slot:selection="{ item }">
-                          {{ getRateText(item) }}
-                        </template>
-                      </v-select>
-                    </v-label>
-                  </v-layout>
+                    <v-layout
+                      column
+                      class="control-group flex-grow-0"
+                    >
+                      <v-label>
+                        <v-subheader>Тариф</v-subheader>
+                        <v-select
+                          v-model="order.rateId"
+                          :items="rates"
+                          :menu-props="menuProps"
+                          :loading="isRateRequesting"
+                          :disabled="isRateRequesting"
+                          :error-messages="errors"
+                          append-icon="unfold_more"
+                          item-value="id"
+                          item-color="admin-primary"
+                          single-line
+                          persistent-placeholder
+                          outlined
+                        >
+                          <template v-slot:item="{ item }">
+                            {{ getRateText(item) }}
+                          </template>
+                          <template v-slot:selection="{ item }">
+                            {{ getRateText(item) }}
+                          </template>
+                        </v-select>
+                      </v-label>
+                    </v-layout>
+                  </ValidationProvider>
                 </v-col>
                 <v-col class="col-12 col-sm-6">
                   <ValidationProvider
@@ -291,20 +333,15 @@
                     class="mr-sm-3"
                     color="primary"
                     elevation="0"
+                    type="submit"
                   >
                     Сохранить
-                  </v-btn>
-                  <v-btn
-                    class="mr-sm-3"
-                    color="tertiary"
-                    elevation="0"
-                  >
-                    Отменить
                   </v-btn>
                   <v-btn
                     class="ml-sm-auto"
                     color="secondary"
                     elevation="0"
+                    @click="remove"
                   >
                     Удалить
                   </v-btn>
@@ -321,15 +358,41 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 export default {
+  data: () => ({
+    menuProps: {
+      bottom: true,
+      offsetY: true,
+      tile: true,
+    },
+  }),
   created() {
+    this.getCities();
+    this.getCars();
+    this.getRates();
+    this.getPoints();
     this.getOrder(this.$route.params.id);
   },
   computed: {
-    ...mapGetters("Order", ["isOrderRequesting"]),
-    ...mapGetters("Rate", ["isRateRequesting"]),
-    ...mapGetters("Car", ["isCarRequesting"]),
-    ...mapGetters("Point", ["isPointRequesting", "isCityRequesting"]),
-
+    ...mapGetters("Order", {
+      isOrderRequesting: "isRequesting",
+      order: "orderData",
+    }),
+    ...mapGetters("Rate", {
+      isRateRequesting: "isRequesting",
+      rates: "rates",
+    }),
+    ...mapGetters("Car", {
+      isCarRequesting: "isRequesting",
+      cars: "cars",
+    }),
+    ...mapGetters("Point", {
+      isPointRequesting: "isRequesting",
+      points: "points",
+    }),
+    ...mapGetters("City", {
+      isCityRequesting: "isRequesting",
+      cities: "cities",
+    }),
     hasCity() {
       return Boolean(this.order.cityId);
     },
@@ -352,34 +415,19 @@ export default {
       return colors;
     },
   },
-  data: () => ({
-    textProps: {
-      outlined: true,
-      solo: true,
-    },
-    menuProps: {
-      bottom: true,
-      offsetY: true,
-      tile: true,
-    },
-    cars: [],
-    cities: null,
-    points: null,
-    rates: [],
-    order: {},
-  }),
   methods: {
-    ...mapActions("Order", ["requestOrderData"]),
-    ...mapActions("Point", ["requestPoints", "requestCities"]),
+    ...mapActions("Order", [
+      "requestOrderData",
+      "updateOrder",
+      "deleteOrder",
+      "resetOrder",
+    ]),
+    ...mapActions("Point", ["requestPoints"]),
+    ...mapActions("City", ["requestCities"]),
     ...mapActions("Car", ["requestCars"]),
     ...mapActions("Rate", ["requestRates"]),
     async getOrder(orderId) {
-      const orderData = await this.requestOrderData(orderId);
-      this.order = orderData;
-      this.getCities();
-      this.getCars();
-      this.getRates();
-      this.getPoints();
+      const response = await this.requestOrderData(orderId);
     },
     async getPoints() {
       const params = {
@@ -387,28 +435,44 @@ export default {
       };
 
       if (this.order.cityId) {
-        const { data } = await this.requestPoints(params);
-        this.points = data;
-        if (data) {
-          this.order.pointId = data[0].id;
-        }
+        const { response } = await this.requestPoints(params);
+        this.order.pointId = this.points[0].id;
       }
     },
     async getCities() {
-      const { data } = await this.requestCities();
-      this.cities = data;
+      const response = await this.requestCities({ limit: null });
     },
     async getCars() {
-      const { data } = await this.requestCars();
-      this.cars = data;
+      const response = await this.requestCars({ limit: null });
     },
     async getRates() {
-      const { data } = await this.requestRates();
-      this.rates = data;
+      const response = await this.requestRates({ limit: null });
+    },
+    update() {
+      const order = this.order;
+      if (order) {
+        this.updateOrder({ id: order.id, order });
+      }
+    },
+    remove() {
+      const order = this.order;
+      if (order) {
+        this.deleteOrder({ id: order.id });
+      }
+    },
+    getTextProps(errors) {
+      return {
+        "error-messages": errors,
+        outlined: true,
+        solo: true,
+      };
     },
     getRateText(item) {
       return `${item.name}(${item.unit}) - ${item.price}`;
     },
+  },
+  beforeDestroy() {
+    this.resetOrder();
   },
 };
 </script>

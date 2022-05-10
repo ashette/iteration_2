@@ -15,22 +15,16 @@ export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestAllCities({ commit }) {
-            commit('requestCities')
-            try {
-                const { data: cities } = await MainService.getCities();
-                commit('requestCitiesSuccess', cities)
-                return cities
-            } catch (error) {
-                commit('requestCitiesFailed', error)
-                throw error
-            }
-        },
-        async requestCities({ commit, state, dispatch }) {
+        async requestCities({ commit, state, dispatch }, params = {}) {
             commit('requestCities')
             try {
                 const { page, limit } = state.pagination
-                const { data: cities, count } = await MainService.getCities({ page: page - 1, limit });
+                const requestParams = {
+                    page: page - 1,
+                    limit,
+                    ...params
+                }
+                const { data: cities, count } = await MainService.getCities(requestParams);
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {

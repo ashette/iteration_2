@@ -106,6 +106,18 @@ export default {
         const { data } = await api.client.get(`/db/car/${id}`, { params });
         return castCar(data.data)
     },
+    async createCar(newData, params) {
+        const { data } = await api.client.post(`/db/car`, newData, { params });
+        return data
+    },
+    async updateCar(id, newData, params) {
+        const { data } = await api.client.put(`/db/car/${id}`, newData, { params });
+        return data
+    },
+    async deleteCar(id, params) {
+        const { data } = await api.client.delete(`/db/car/${id}`, { params });
+        return data
+    },
     async getOrders(params) {
         const { data } = await api.client.get('/db/order', { params });
         return data
@@ -113,5 +125,13 @@ export default {
     async getOrderData(id, params) {
         const { data } = await api.client.get(`/db/order/${id}`, { params });
         return castOrder(data.data)
+    },
+    async updateOrder(id, newData, params) {
+        const { data } = await api.client.put(`/db/order/${id}`, newData, { params });
+        return data
+    },
+    async deleteOrder(id, params) {
+        const { data } = await api.client.delete(`/db/order/${id}`, { params });
+        return data
     },
 }

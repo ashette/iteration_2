@@ -15,22 +15,16 @@ export default {
     namespaced: true,
     state: getInitialState(),
     actions: {
-        async requestAllRates({ commit }) {
-            commit('requestRates')
-            try {
-                const { data: rates } = await MainService.getRates();
-                commit('requestRatesSuccess', rates)
-                return rates
-            } catch (error) {
-                commit('requestRatesFailed', error)
-                throw error
-            }
-        },
-        async requestRates({ commit, state, dispatch }) {
+        async requestRates({ commit, state, dispatch }, params = {}) {
             commit('requestRates')
             try {
                 const { page, limit } = state.pagination
-                const { data: rates, count } = await MainService.getRates({ page: page - 1, limit });
+                const requestParams = {
+                    page: page - 1,
+                    limit,
+                    ...params
+                }
+                const { data: rates, count } = await MainService.getRates(requestParams);
                 const newLength = Math.ceil(count / limit);
                 commit('setPageLength', newLength)
                 if (newLength < page) {
