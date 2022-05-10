@@ -9,7 +9,11 @@
         class="flex-grow-0"
         no-gutters
       >
-        <filters :filters="filters" />
+        <filters
+          :filters="filters"
+          @sumbit="handleRequestFilters"
+          @reset="handleResetFilters"
+        />
       </v-row>
       <v-container
         class="table-container px-0 flex-grow-1"
@@ -124,7 +128,10 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    filters: [],
+    filters: [
+      { id: "categoryId", name: "Категория", values: [], selectedValue: null },
+    ],
+    filterParams: {},
     editedItem: {},
     defaultItem: {},
     headers: [
@@ -176,8 +183,12 @@ export default {
   created() {
     this.getCars();
   },
+  mounted() {
+    this.setFilters();
+  },
   computed: {
     ...mapGetters("Car", ["isRequesting", "cars", "pagination"]),
+    ...mapGetters("Category", ["categories"]),
   },
   methods: {
     ...mapActions("Car", [
@@ -185,18 +196,45 @@ export default {
       "requestCars",
       "deleteCarFromList",
       "resetCars",
+      "setFilter",
+      "resetFilter",
     ]),
-    async getCars() {
-      const response = await this.requestCars();
+    ...mapActions("Category", ["requestCategories"]),
+    async getCars(params = {}) {
+      const response = await this.requestCars(params);
+    },
+    async setFilterCategories() {
+      const response = await this.requestCategories({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "categoryId") {
+          item.values = this.categories;
+        }
+        return item;
+      });
+    },
+    setFilters() {
+      this.setFilterCategories();
+    },
+    handleRequestFilters() {
+      this.filters.map((filter) => {
+        this.filterParams[filter.id] = filter.selectedValue;
+      });
+      this.setFilter(this.filterParams);
+    },
+    handleResetFilters() {
+      this.filters.map((filter) => {
+        filter.selectedValue = null;
+      });
+      this.filterParams = {};
+      this.resetFilter();
     },
     handlePageChange(value) {
-      this.setCurrentPage(value);
+      this.setCurrentPage(value, this.filterParams);
     },
     deleteItem(item) {
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
-
     deleteItemConfirm() {
       const car = this.editedItem;
       if (car) {

@@ -19,10 +19,10 @@ export default {
             commit('requestPoints')
             try {
                 const { page, limit } = state.pagination
-                const requestParams = { 
+                const requestParams = {
                     page: page - 1,
                     limit,
-                    ...params 
+                    ...params
                 }
                 const { data: points, count } = await MainService.getPoints(requestParams);
                 const newLength = Math.ceil(count / limit);

@@ -9,7 +9,11 @@
         class="flex-grow-0"
         no-gutters
       >
-        <filters :filters="filters" />
+        <filters
+          :filters="filters"
+          @sumbit="handleRequestFilters"
+          @reset="handleResetFilters"
+        />
       </v-row>
       <v-container
         class="table-container flex-grow-1"
@@ -27,7 +31,6 @@
           ></v-progress-circular>
         </v-row>
         <v-row
-          v-else
           v-for="order in orders"
           :key="order.id"
           class="table-row align-center"
@@ -156,7 +159,12 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    filters: [],
+    filters: [
+      { id: "carId", name: "Модель", values: [], selectedValue: null },
+      { id: "cityId", name: "Город", values: [], selectedValue: null },
+      { id: "rateId", name: "Тариф", values: [], selectedValue: null },
+    ],
+    filterParams: {},
     editedItem: {},
     defaultItem: {},
     emptyImg: require("@/assets/no_image.jpg"),
@@ -164,8 +172,14 @@ export default {
   created() {
     this.getOrders();
   },
+  mounted() {
+    this.setFilters();
+  },
   computed: {
     ...mapGetters("Order", ["isRequesting", "orders", "pagination"]),
+    ...mapGetters("Car", ["cars"]),
+    ...mapGetters("City", ["cities"]),
+    ...mapGetters("Rate", ["rates"]),
   },
   methods: {
     ...mapActions("Order", [
@@ -173,9 +187,59 @@ export default {
       "requestOrders",
       "deleteOrderFromList",
       "resetOrders",
+      "setFilter",
+      "resetFilter",
     ]),
-    async getOrders() {
-      const response = await this.requestOrders();
+    ...mapActions("Car", ["requestCars"]),
+    ...mapActions("City", ["requestCities"]),
+    ...mapActions("Rate", ["requestRates"]),
+    async getOrders(params = {}) {
+      const response = await this.requestOrders(params);
+    },
+    async setFilterCars() {
+      const response = await this.requestCars({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "carId") {
+          item.values = this.cars;
+        }
+        return item;
+      });
+    },
+    async setFilterCities() {
+      const response = await this.requestCities({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "cityId") {
+          item.values = this.cities;
+        }
+        return item;
+      });
+    },
+    async setFilterRates() {
+      const response = await this.requestRates({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "rateId") {
+          item.values = this.rates;
+        }
+        return item;
+      });
+    },
+    setFilters() {
+      this.setFilterCars();
+      this.setFilterCities();
+      this.setFilterRates();
+    },
+    handleRequestFilters() {
+      this.filters.map((filter) => {
+        this.filterParams[filter.id] = filter.selectedValue;
+      });
+      this.setFilter(this.filterParams);
+    },
+    handleResetFilters() {
+      this.filters.map((filter) => {
+        filter.selectedValue = null;
+      });
+      this.filterParams = {};
+      this.resetFilter();
     },
     handlePageChange(value) {
       this.setCurrentPage(value);

@@ -19,10 +19,10 @@ export default {
             commit('requestUnits')
             try {
                 const { page, limit } = state.pagination
-                const requestParams = { 
+                const requestParams = {
                     page: page - 1,
                     limit,
-                    ...params 
+                    ...params
                 }
                 const { data: units, count } = await MainService.getUnits(requestParams);
                 const newLength = Math.ceil(count / limit);

@@ -10,7 +10,8 @@ const getInitialState = () => {
             length: 1,
         },
         cars: [],
-        carData: {}
+        carData: {},
+        filters: {}
     }
 }
 export default {
@@ -24,10 +25,11 @@ export default {
                 const requestParams = {
                     page: page - 1,
                     limit,
+                    ...state.filters,
                     ...params
                 }
                 const { data: cars, count } = await MainService.getCars(requestParams);
-                const newLength = Math.ceil(count / limit);
+                const newLength = Math.ceil(count / limit) || 1;
                 commit('setPageLength', newLength)
                 if (newLength < page) {
                     dispatch('setCurrentPage', page - 1)
@@ -130,6 +132,14 @@ export default {
             commit('setPage', value);
             dispatch('requestCars')
         },
+        setFilter({ commit, dispatch }, params = {}) {
+            commit('setFilter', params);
+            dispatch('requestCars')
+        },
+        resetFilter({ commit, dispatch }) {
+            commit('resetFilter');
+            dispatch('requestCars')
+        },
         resetCars({ commit }) {
             commit('resetCars')
         },
@@ -187,6 +197,12 @@ export default {
                 ...state.pagination,
                 page
             }
+        },
+        setFilter(state, filter) {
+            state.filters = filter
+        },
+        resetFilter(state) {
+            state.filters = {}
         },
         resetCars(state) {
             Object.assign(state, getInitialState())

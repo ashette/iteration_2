@@ -10,7 +10,8 @@ const getInitialState = () => {
             length: 1,
         },
         orders: [],
-        orderData: {}
+        orderData: {},
+        filters: {}
     }
 }
 export default {
@@ -24,10 +25,11 @@ export default {
                 const requestParams = {
                     page: page - 1,
                     limit,
+                    ...state.filters,
                     ...params
                 }
                 const { data: orders, count } = await MainService.getOrders(requestParams);
-                const newLength = Math.ceil(count / limit);
+                let newLength = Math.ceil(count / limit) || 1;
                 commit('setPageLength', newLength)
                 if (newLength < page) {
                     dispatch('setCurrentPage', page - 1)
@@ -73,7 +75,7 @@ export default {
             commit('requestDeleteOrder')
             try {
                 const response = await MainService.deleteOrder(id, params);
-                router.push({name: 'AdminOrders'})
+                router.push({ name: 'AdminOrders' })
                 dispatch('Notifications/addNotification', {
                     type: 'success',
                     message: 'Успешно удалено!'
@@ -109,6 +111,14 @@ export default {
         },
         setCurrentPage({ commit, dispatch }, value) {
             commit('setPage', value);
+            dispatch('requestOrders')
+        },
+        setFilter({ commit, dispatch }, params = {}) {
+            commit('setFilter', params);
+            dispatch('requestOrders')
+        },
+        resetFilter({ commit, dispatch }) {
+            commit('resetFilter');
             dispatch('requestOrders')
         },
         resetOrders({ commit }) {
@@ -162,6 +172,12 @@ export default {
                 ...state.pagination,
                 page
             }
+        },
+        setFilter(state, filter) {
+            state.filters = filter
+        },
+        resetFilter(state) {
+            state.filters = {}
         },
         resetOrders(state) {
             Object.assign(state, getInitialState())

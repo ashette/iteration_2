@@ -5,13 +5,6 @@
       class="admin-content__container d-flex flex-column elevation-5"
       fluid
     >
-      <v-container
-        class="pa-0 flex-grow-0"
-        fluid
-      >
-        <filters :filters="filters" />
-      </v-container>
-
       <entity-list
         :items="rates"
         :headers="headers"
@@ -103,19 +96,17 @@
 </template>
 
 <script>
-import Filters from "../../components/Filters";
 import EntityList from "../../components/Entity/EntityList";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
-  components: { Filters, EntityList },
+  components: { EntityList },
   data: () => ({
     menuProps: {
       bottom: true,
       offsetY: true,
       tile: true,
     },
-    filters: [],
     headers: [
       {
         text: "Название",
@@ -157,7 +148,7 @@ export default {
       const response = await this.requestRates();
     },
     async getUnits() {
-      const response = await this.requestUnits({limit: null});
+      const response = await this.requestUnits({ limit: null });
     },
     handlePageChange(value) {
       this.setCurrentPage(value);
