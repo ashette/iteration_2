@@ -18,23 +18,6 @@
         ></v-file-input>
       </ValidationProvider>
     </div>
-    <div
-      v-if="imgLoading"
-      class="image-loader-progress-bar"
-    >
-      <v-progress-linear
-        background-color="disabled"
-        color="primary"
-        height="5"
-        :buffer-value="bufferValue"
-        :value="value"
-        rounded
-      >
-        <template v-slot:default="{ value }">
-          <div> Заполнено <span>{{ Math.ceil(value) }}%</span></div>
-        </template>
-      </v-progress-linear>
-    </div>
   </div>
 </template>
 
@@ -44,9 +27,6 @@ export default {
     imagePath: String,
   },
   data: () => ({
-    imgLoading: false,
-    bufferValue: 100,
-    value: 0,
     acceptedImageTypes: ["image/jpeg", "image/png"],
     path: null
   }),
@@ -54,25 +34,8 @@ export default {
     this.path = this.imagePath
   },
   methods: {
-    iterate() {
-      if (this.bufferValue !== this.value) {
-        this.value++;
-      } else {
-        this.hideProgressBar();
-      }
-    },
-    hideProgressBar() {
-      this.imgLoading = false;
-      this.value = 0;
-    },
     onLoadImage(event) {
-      if (event) {
-        this.imgLoading = true;
-      }
-
-      this.$emit("onUpload", event, this.acceptedImageTypes, () =>
-        this.iterate()
-      );
+      this.$emit("onUpload", event, this.acceptedImageTypes);
     },
   },
 };

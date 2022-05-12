@@ -31,6 +31,10 @@
               class="car-main-info__loader"
               @onUpload="onUpload"
             ></image-loader>
+            <progress-info
+              :progress="progressValue"
+              class="car-main-info__progress"
+            ></progress-info>
             <div class="car-main-info__description">
               <span>Описание</span>
               {{ currentDescription }}
@@ -74,6 +78,7 @@
                           v-model="car.name"
                           outlined
                           solo
+                          @change="handleProgress"
                         ></v-text-field>
                       </v-label>
                     </v-layout>
@@ -98,6 +103,7 @@
                           single-line
                           persistent-placeholder
                           outlined
+                          @change="handleProgress"
                         ></v-select>
                       </v-label>
                     </v-layout>
@@ -120,6 +126,7 @@
                             solo
                             :error-messages="errors"
                             append-icon="currency_ruble"
+                            @change="handleProgress"
                           ></v-text-field>
                         </v-label>
                       </v-layout>
@@ -143,6 +150,7 @@
                             solo
                             :error-messages="errors"
                             append-icon="currency_ruble"
+                            @change="handleProgress"
                           ></v-text-field>
                         </v-label>
                       </v-layout>
@@ -190,6 +198,7 @@
                           v-model="car.description"
                           outlined
                           solo
+                          @change="handleProgress"
                         ></v-textarea>
                       </v-label>
                     </v-layout>
@@ -205,6 +214,7 @@
                           v-model="car.number"
                           outlined
                           solo
+                          @change="handleProgress"
                         ></v-text-field>
                       </v-label>
                     </v-layout>
@@ -241,10 +251,12 @@
 
 <script>
 import ImageLoader from "@/components/Car/ImageLoader";
+import ProgressInfo from "@/components/Car/ProgressInfo";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
+const PROGRESS_BUFFER = 6;
 export default {
-  components: { ImageLoader },
+  components: { ImageLoader, ProgressInfo },
   data: () => ({
     emptyImg: require("@/assets/no_image.jpg"),
     colors: [],
@@ -257,6 +269,7 @@ export default {
       offsetY: true,
       tile: true,
     },
+    progressValue: 0,
   }),
   computed: {
     ...mapGetters("Car", {
@@ -277,16 +290,13 @@ export default {
   },
   methods: {
     ...mapMutations("Car", ["resetCar"]),
-    ...mapActions("Car", [
-      "requestCarData",
-      "updateCar",
-      "deleteCar",
-    ]),
+    ...mapActions("Car", ["requestCarData", "updateCar", "deleteCar"]),
     ...mapActions("Category", ["requestCategories"]),
 
     async getCar(carId) {
       const response = await this.requestCarData(carId);
       this.setDefaultValues();
+      this.handleProgress();
     },
     async getCategories() {
       const { response } = await this.requestCategories({ limit: null });
@@ -306,21 +316,11 @@ export default {
       this.currentName = this.car.name;
       this.currentDescription = this.car.description;
     },
-    loading() {
-      return new Promise((res) => {
-        setTimeout(res, Math.random() * 1000);
-      });
-    },
-    onUpload(file, types, iterate) {
+    onUpload(file, types) {
       if (file && types.includes(file.type)) {
-        const promises = new Array(100)
-          .fill(0)
-          .map(() => this.loading().then(() => iterate()));
-
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = async () => {
-          await Promise.all(promises).then(() => iterate());
           this.car.thumbnailPath = reader.result;
           this.car.thumbnail = {
             size: file.size,
@@ -348,6 +348,11 @@ export default {
       if (car) {
         this.deleteCar({ id: car.id });
       }
+    },
+    handleProgress() {
+      const { id, colors, thumbnailPath, tank, categoryName, ...rest } = this.car;
+      const filledFields = Object.values(rest).filter((item) => item).length;
+      this.progressValue = Math.round((filledFields / PROGRESS_BUFFER) * 100);
     },
   },
   beforeDestroy() {

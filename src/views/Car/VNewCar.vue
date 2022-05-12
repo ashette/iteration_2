@@ -16,10 +16,13 @@
               class="car-main-info__img"
             ></v-img>
             <image-loader
-              :imagePath="car.thumbnail.path"
               class="car-main-info__loader"
               @onUpload="onUpload"
             ></image-loader>
+            <progress-info
+              :progress="progressValue"
+              class="car-main-info__progress"
+            ></progress-info>
           </v-col>
           <v-col class="
             car-settings 
@@ -51,6 +54,7 @@
                           :error-messages="errors"
                           outlined
                           solo
+                          @change="handleProgress"
                         ></v-text-field>
                       </v-label>
                     </v-layout>
@@ -80,6 +84,7 @@
                           single-line
                           persistent-placeholder
                           outlined
+                          @change="handleProgress"
                         ></v-select>
                       </v-label>
                     </v-layout>
@@ -103,6 +108,7 @@
                           outlined
                           solo
                           append-icon="currency_ruble"
+                          @change="handleProgress"
                         ></v-text-field>
                       </v-label>
                     </v-layout>
@@ -126,6 +132,7 @@
                           outlined
                           solo
                           append-icon="currency_ruble"
+                          @change="handleProgress"
                         ></v-text-field>
                       </v-label>
                     </v-layout>
@@ -142,6 +149,7 @@
                         v-model="car.number"
                         outlined
                         solo
+                        @change="handleProgress"
                       ></v-text-field>
                     </v-label>
                   </v-layout>
@@ -188,6 +196,7 @@
                         v-model="car.description"
                         outlined
                         solo
+                        @change="handleProgress"
                       ></v-textarea>
                     </v-label>
                   </v-layout>
@@ -215,10 +224,12 @@
 
 <script>
 import ImageLoader from "@/components/Car/ImageLoader";
+import ProgressInfo from "@/components/Car/ProgressInfo";
 import { mapActions, mapGetters } from "vuex";
 
+const PROGRESS_BUFFER = 6;
 export default {
-  components: { ImageLoader },
+  components: { ImageLoader, ProgressInfo },
   data: () => ({
     emptyImg: require("@/assets/no_image.jpg"),
     colors: [],
@@ -233,12 +244,14 @@ export default {
       priceMin: 0,
       priceMax: 0,
       name: "",
+      description: "",
       number: "",
       categoryId: null,
       thumbnail: {},
       colors: [],
       id: "",
     },
+    progressValue: 0,
   }),
   computed: {
     ...mapGetters("Category", {
@@ -267,11 +280,6 @@ export default {
         this.colors.push(color);
       }
     },
-    loading() {
-      return new Promise((res) => {
-        setTimeout(res, Math.random() * 1000);
-      });
-    },
     create() {
       const car = this.car;
       this.car.colors = this.selectedColors;
@@ -280,15 +288,10 @@ export default {
         this.createCar({ car });
       }
     },
-    onUpload(file, types, iterate) {
+    onUpload(file, types) {
       if (file && types.includes(file.type)) {
-        const promises = new Array(100)
-          .fill(0)
-          .map(() => this.loading().then(() => iterate()));
-
         const reader = new FileReader();
         reader.onloadend = async () => {
-          await Promise.all(promises).then(() => iterate());
           this.car.thumbnail = {
             size: file.size,
             originalname: file.name,
@@ -301,6 +304,11 @@ export default {
       } else {
         this.car.thumbnail = {};
       }
+    },
+    handleProgress() {
+      const { id, colors, thumbnail, ...rest } = this.car;
+      const filledFields = Object.values(rest).filter((item) => item).length;
+      this.progressValue = Math.round((filledFields / PROGRESS_BUFFER) * 100);
     },
   },
 };
