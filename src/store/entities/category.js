@@ -98,9 +98,6 @@ export default {
             commit('setPage', value);
             dispatch('requestCategories')
         },
-        resetCategories({ commit }) {
-            commit('resetCategories')
-        }
     },
     mutations: {
         requestCategories(state) {

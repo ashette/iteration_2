@@ -121,7 +121,7 @@
 <script>
 import Filters from "@/components/Filters";
 import ControlButtons from "@/components/ControlButtons";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { Filters, ControlButtons },
@@ -191,11 +191,11 @@ export default {
     ...mapGetters("Category", ["categories"]),
   },
   methods: {
+    ...mapMutations("Car", ["resetCars"]),
     ...mapActions("Car", [
       "setCurrentPage",
       "requestCars",
       "deleteCarFromList",
-      "resetCars",
       "setFilter",
       "resetFilter",
     ]),

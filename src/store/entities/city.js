@@ -98,9 +98,6 @@ export default {
             commit('setPage', value);
             dispatch('requestCities')
         },
-        resetCities({ commit }) {
-            commit('resetCities')
-        }
     },
     mutations: {
         requestCities(state) {

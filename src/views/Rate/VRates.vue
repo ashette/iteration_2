@@ -97,7 +97,7 @@
 
 <script>
 import EntityList from "../../components/Entity/EntityList";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { EntityList },
@@ -135,13 +135,13 @@ export default {
     this.getUnits();
   },
   methods: {
+    ...mapMutations("Rate", ["resetRates"]),
     ...mapActions("Rate", [
       "requestRates",
       "createRate",
       "updateRate",
       "deleteRate",
       "setCurrentPage",
-      "resetRates",
     ]),
     ...mapActions("Unit", ["requestUnits"]),
     async getRates() {

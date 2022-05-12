@@ -121,12 +121,6 @@ export default {
             commit('resetFilter');
             dispatch('requestOrders')
         },
-        resetOrders({ commit }) {
-            commit('resetOrders')
-        },
-        resetOrder({ commit }) {
-            commit('resetOrder')
-        }
     },
     mutations: {
         requestOrders(state) {

@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import EntityList from "../../components/Entity/EntityList";
 
 export default {
@@ -108,13 +108,13 @@ export default {
     this.getUnits();
   },
   methods: {
+    ...mapMutations("Unit", ["resetUnits"]),
     ...mapActions("Unit", [
       "requestUnits",
       "createUnit",
       "updateUnit",
       "deleteUnit",
       "setCurrentPage",
-      "resetUnits",
     ]),
     async getUnits() {
       const response = await this.requestUnits();

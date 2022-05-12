@@ -98,9 +98,6 @@ export default {
             commit('setPage', value);
             dispatch('requestPoints')
         },
-        resetPoints({ commit }) {
-            commit('resetPoints')
-        }
     },
     mutations: {
         requestPoints(state) {

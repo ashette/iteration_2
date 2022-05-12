@@ -98,9 +98,6 @@ export default {
             commit('setPage', value);
             dispatch('requestRates')
         },
-        resetRates({ commit }) {
-            commit('resetRates')
-        }
     },
     mutations: {
         requestRates(state) {

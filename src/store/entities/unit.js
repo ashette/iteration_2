@@ -98,9 +98,6 @@ export default {
             commit('setPage', value);
             dispatch('requestUnits')
         },
-        resetUnits({ commit }) {
-            commit('resetUnits')
-        }
     },
     mutations: {
         requestUnits(state) {

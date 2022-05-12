@@ -140,12 +140,6 @@ export default {
             commit('resetFilter');
             dispatch('requestCars')
         },
-        resetCars({ commit }) {
-            commit('resetCars')
-        },
-        resetCar({ commit }) {
-            commit('resetCar')
-        }
     },
     mutations: {
         requestCars(state) {

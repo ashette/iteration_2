@@ -356,7 +356,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
   data: () => ({
     menuProps: {
@@ -416,11 +416,11 @@ export default {
     },
   },
   methods: {
+    ...mapMutations("Order", ["resetOrder"]),
     ...mapActions("Order", [
       "requestOrderData",
       "updateOrder",
       "deleteOrder",
-      "resetOrder",
     ]),
     ...mapActions("Point", ["requestPoints"]),
     ...mapActions("City", ["requestCities"]),

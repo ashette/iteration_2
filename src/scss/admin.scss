@@ -1061,7 +1061,8 @@ $admin-font: "Helvetica", sans-serif;
     .v-application .v-main {
         &.admin {
             .control-buttons {
-                flex-direction: column;
+                flex-direction:  column;
+                background-color: transparent;
 
                 .v-icon {
                     font-size: 16px;
@@ -1071,14 +1072,17 @@ $admin-font: "Helvetica", sans-serif;
                     font-size: 0 !important;
                     border-width: 1px !important;
                     max-height: unset;
+                    background-color: var(--v-background-lighten1)
                 }
 
                 .v-btn:first-child {
                     border-radius: 4px;
+                    margin: 4px 0px;
                 }
 
                 .v-btn:last-child {
                     border-radius: 4px;
+                    margin: 4px 0px;
                 }
 
                 .v-btn:not(:last-child):not(:first-child) {

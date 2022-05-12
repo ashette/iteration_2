@@ -152,7 +152,7 @@
 <script>
 import Filters from "@/components/Filters";
 import ControlButtons from "@/components/ControlButtons";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { Filters, ControlButtons },
@@ -182,11 +182,11 @@ export default {
     ...mapGetters("Rate", ["rates"]),
   },
   methods: {
+    ...mapMutations("Order", ["resetOrders"]),
     ...mapActions("Order", [
       "setCurrentPage",
       "requestOrders",
       "deleteOrderFromList",
-      "resetOrders",
       "setFilter",
       "resetFilter",
     ]),

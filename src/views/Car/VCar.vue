@@ -241,7 +241,7 @@
 
 <script>
 import ImageLoader from "@/components/Car/ImageLoader";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { ImageLoader },
@@ -276,11 +276,11 @@ export default {
     this.getCar(this.$route.params.id);
   },
   methods: {
+    ...mapMutations("Car", ["resetCar"]),
     ...mapActions("Car", [
       "requestCarData",
       "updateCar",
       "deleteCar",
-      "resetCar",
     ]),
     ...mapActions("Category", ["requestCategories"]),
 

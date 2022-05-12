@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import EntityList from "../../components/Entity/EntityList";
 
 export default {
@@ -101,13 +101,13 @@ export default {
     this.getCategories();
   },
   methods: {
+    ...mapMutations("Category", ["resetCategories"]),
     ...mapActions("Category", [
       "requestCategories",
       "createCategory",
       "updateCategory",
       "deleteCategory",
       "setCurrentPage",
-      "resetCategories",
     ]),
     async getCategories() {
       const response = await this.requestCategories();

@@ -110,7 +110,7 @@
 
 <script>
 import EntityList from "../../components/Entity/EntityList";
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { EntityList },
@@ -147,13 +147,13 @@ export default {
     this.getCities();
   },
   methods: {
+    ...mapMutations("Point", ["resetPoints"]),
     ...mapActions("Point", [
       "requestPoints",
       "createPoint",
       "updatePoint",
       "deletePoint",
       "setCurrentPage",
-      "resetPoints",
     ]),
     ...mapActions("City", ["requestCities"]),
     async getPoints() {

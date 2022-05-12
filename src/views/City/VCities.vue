@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import EntityList from "../../components/Entity/EntityList";
 
 export default {
@@ -82,13 +82,13 @@ export default {
     this.getCities();
   },
   methods: {
+    ...mapMutations("City", ["resetCities"]),
     ...mapActions("City", [
       "requestCities",
       "createCity",
       "updateCity",
       "deleteCity",
       "setCurrentPage",
-      "resetCities",
     ]),
     async getCities() {
       const response = await this.requestCities();
