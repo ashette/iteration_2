@@ -3,7 +3,19 @@
     class="table-container px-0 flex-grow-1"
     fluid
   >
+    <v-row
+      v-if="loading"
+      no-gutters
+      class="justify-center align-center fill-height"
+    >
+      <v-progress-circular
+        indeterminate
+        size="54"
+        color="primary"
+      ></v-progress-circular>
+    </v-row>
     <v-data-table
+      v-else
       :headers="headers"
       :items="items"
       hide-default-footer
@@ -14,6 +26,8 @@
             v-model="dialog"
             max-width="320px"
             content-class="admin"
+            persistent
+            no-click-animation
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -31,35 +45,43 @@
                 </v-icon>
               </v-btn>
             </template>
-            <v-card>
-              <v-card-title class="py-5">{{ formTitle }}</v-card-title>
-              <slot
-                name="entityUpdateForm"
-                :editedItem="editedItem"
-              ></slot>
-              <v-card-actions class="pb-5">
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="tertiary"
-                  elevation="0"
-                  @click="close"
-                >
-                  Отменить
-                </v-btn>
-                <v-btn
-                  color="primary"
-                  elevation="0"
-                  @click="save"
-                >
-                  Сохранить
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <ValidationObserver v-slot="{ handleSubmit }">
+              <v-form @submit.prevent="handleSubmit(onSubmit)">
+                <v-card>
+                  <v-card-title class="py-5">{{ formTitle }}</v-card-title>
+                  <slot
+                    name="entityUpdateForm"
+                    :editedItem="editedItem"
+                  ></slot>
+                  <v-card-actions class="pb-5">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="tertiary"
+                      elevation="0"
+                      @click="close"
+                    >
+                      Отменить
+                    </v-btn>
+                    <v-btn
+                      color="primary"
+                      elevation="0"
+                      :loading="loading"
+                      :disabled="loading"
+                      type="submit"
+                    >
+                      Сохранить
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
+            </ValidationObserver>
           </v-dialog>
           <v-dialog
             v-model="dialogDelete"
             max-width="320px"
             content-class="admin"
+            persistent
+            no-click-animation
           >
             <v-card>
               <v-card-title class="justify-center py-5">Удалить элемент?</v-card-title>
@@ -99,12 +121,13 @@
 
 <script>
 import ControlButtons from "@/components/ControlButtons";
+import { mapGetters } from "vuex";
 
 export default {
   props: {
     items: Array,
     headers: Array,
-    onUpdate: Function,
+    loading: Boolean,
   },
   components: { ControlButtons },
   data: () => ({
@@ -115,7 +138,7 @@ export default {
   }),
   methods: {
     editItem(item) {
-      this.editedItem = item;
+      this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
     deleteItem(item) {
@@ -124,7 +147,7 @@ export default {
     },
 
     deleteItemConfirm() {
-      //TODO
+      this.$emit("onRemove", this.editedItem);
       this.closeDelete();
     },
 
@@ -142,24 +165,22 @@ export default {
       });
     },
 
-    save() {
+    onSubmit() {
       if (this.isEdit) {
-        const itemIndex = this.items.findIndex(
-          (item) => item.id == this.editedItem.id
-        );
-        Object.assign(this.items[itemIndex], this.editedItem);
+        this.$emit("onUpdate", this.editedItem);
       } else {
-        // TODO
+        this.$emit("onCreate", this.editedItem);
       }
       this.close();
     },
   },
   computed: {
+    ...mapGetters(["isDataRequesting"]),
     isEdit() {
       return Boolean(this.editedItem.id);
     },
     formTitle() {
-      return this.isEdit ? "Создать" : "Редактировать";
+      return !this.isEdit ? "Создать" : "Редактировать";
     },
   },
   watch: {

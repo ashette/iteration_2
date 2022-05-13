@@ -9,7 +9,11 @@
 <script>
 import AdminLayout from "@/layouts/AdminLayout";
 import MainLayout from "@/layouts/MainLayout";
+
 export default {
+  beforeCreate() {
+    this.$store.dispatch("appInit");
+  },
   computed: {
     layout() {
       return (this.$route.meta.layout || "main") + "-layout";

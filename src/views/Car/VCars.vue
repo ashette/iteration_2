@@ -2,22 +2,39 @@
   <div class="admin-content">
     <h1>Список автомобилей</h1>
     <v-container
-      class="admin-content__container d-flex flex-column elevation-5"
+      class="admin-content__container d-flex flex-column elevation-5 flex-grow-1"
       fluid
     >
       <v-row
         class="flex-grow-0"
         no-gutters
       >
-        <filters :filters="filters" />
+        <filters
+          :filters="filters"
+          @sumbit="handleRequestFilters"
+          @reset="handleResetFilters"
+        />
       </v-row>
       <v-container
         class="table-container px-0 flex-grow-1"
         fluid
       >
+        <v-row
+          v-if="isRequesting"
+          no-gutters
+          class="justify-center align-center fill-height"
+        >
+          <v-progress-circular
+            indeterminate
+            size="54"
+            color="primary"
+          ></v-progress-circular>
+        </v-row>
         <v-data-table
+          v-else
           :headers="headers"
           :items="cars"
+          loading-text=""
           hide-default-footer
         >
           <template v-slot:top>
@@ -88,13 +105,13 @@
         no-gutters
       >
         <v-pagination
-          v-model="page"
+          v-model="pagination.page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="10"
-          :total-visible="7"
+          :length="pagination.length"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
+          @input="handlePageChange"
         ></v-pagination>
       </v-row>
     </v-container>
@@ -104,37 +121,19 @@
 <script>
 import Filters from "@/components/Filters";
 import ControlButtons from "@/components/ControlButtons";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { Filters, ControlButtons },
-  methods: {
-    deleteItem(item) {
-      //TODO
-      this.dialogDelete = true;
-    },
-
-    deleteItemConfirm() {
-      //TODO
-      this.closeDelete();
-    },
-    closeDelete() {
-      //TODO
-      this.dialogDelete = false;
-    },
-    editItem(item) {
-      this.$router.push({
-        name: "EditCar",
-        params: {
-          id: item.id,
-          carName: item.name,
-        },
-      });
-    },
-  },
   data: () => ({
-    page: 1,
     dialog: false,
     dialogDelete: false,
+    filters: [
+      { id: "categoryId", name: "Категория", values: [], selectedValue: null },
+    ],
+    filterParams: {},
+    editedItem: {},
+    defaultItem: {},
     headers: [
       {
         text: "Изображение",
@@ -180,67 +179,87 @@ export default {
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
-    filters: [
-      {
-        name: "Модель",
-        values: [
-          {
-            id: 1,
-            name: "Модель1",
-          },
-          {
-            id: 2,
-            name: "Модель2",
-          },
-        ],
-      },
-      {
-        name: "Город",
-        values: [
-          {
-            id: 1,
-            name: "Город1",
-          },
-          {
-            id: 2,
-            name: "Город2",
-          },
-        ],
-      },
-      {
-        name: "Статус",
-        values: [
-          {
-            id: 1,
-            name: "Статус1",
-          },
-          {
-            id: 2,
-            name: "Статус2",
-          },
-        ],
-      },
-    ],
-    cars: [
-      {
-        description: "Это описание автомобиля",
-        priceMin: 11000,
-        priceMax: 12000,
-        name: "Ferrari",
-        number: "m123ss",
-        categoryId: {
-          name: "Спорт",
-          description: "Спорт быстро",
-          id: "5fd91add935d4e0be16a3c4b",
-        },
-        thumbnail: {
-          path: require("@/assets/car.jpg"),
-        },
-        tank: 99,
-        colors: ["оранжевый", "синий"],
-        id: "600fff0bad015e0bb6997d79",
-      },
-    ],
   }),
+  created() {
+    this.getCars();
+  },
+  mounted() {
+    this.setFilters();
+  },
+  computed: {
+    ...mapGetters("Car", ["isRequesting", "cars", "pagination"]),
+    ...mapGetters("Category", ["categories"]),
+  },
+  methods: {
+    ...mapMutations("Car", ["resetCars"]),
+    ...mapActions("Car", [
+      "setCurrentPage",
+      "requestCars",
+      "deleteCarFromList",
+      "setFilter",
+      "resetFilter",
+    ]),
+    ...mapActions("Category", ["requestCategories"]),
+    async getCars(params = {}) {
+      const response = await this.requestCars(params);
+    },
+    async setFilterCategories() {
+      const response = await this.requestCategories({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "categoryId") {
+          item.values = this.categories;
+        }
+        return item;
+      });
+    },
+    setFilters() {
+      this.setFilterCategories();
+    },
+    handleRequestFilters() {
+      this.filters.map((filter) => {
+        this.filterParams[filter.id] = filter.selectedValue;
+      });
+      this.setFilter(this.filterParams);
+    },
+    handleResetFilters() {
+      this.filters.map((filter) => {
+        filter.selectedValue = null;
+      });
+      this.filterParams = {};
+      this.resetFilter();
+    },
+    handlePageChange(value) {
+      this.setCurrentPage(value, this.filterParams);
+    },
+    deleteItem(item) {
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    deleteItemConfirm() {
+      const car = this.editedItem;
+      if (car) {
+        this.deleteCarFromList({ id: car.id });
+        this.closeDelete();
+      }
+    },
+    closeDelete() {
+      this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+      });
+    },
+    editItem(item) {
+      this.$router.push({
+        name: "EditCar",
+        params: {
+          id: item.id,
+          carName: item.name,
+        },
+      });
+    },
+  },
+  beforeDestroy() {
+    this.resetCars();
+  },
 };
 </script>
