@@ -75,8 +75,10 @@ export default {
       { title: "Список авто", link: "/admin/cars", icon: "vertical_split" },
       { title: "Заказы", link: "/admin/orders", icon: "note_add" },
       { title: "Категории", link: "/admin/categories", icon: "grid_view" },
+      { title: "Города", link: "/admin/cities", icon: "location_city" },
       { title: "Пункты выдачи", link: "/admin/points", icon: "place" },
-      { title: "Тарифы", link: "/admin/rates", icon: "local_offer" },
+      { title: "Прайс-лист", link: "/admin/rates", icon: "local_offer" },
+      { title: "Тарифы", link: "/admin/units", icon: "menu_book" },
     ],
   }),
   computed: {

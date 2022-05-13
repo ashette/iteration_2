@@ -6,14 +6,14 @@
       fluid
     >
       <entity-list
-        :items="points"
+        :items="units"
         :headers="headers"
         :loading="isRequesting"
         @onCreate="create"
         @onUpdate="update"
         @onRemove="remove"
       >
-        <template v-slot:entityUpdateForm="{ editedItem }">
+        <template v-slot:entityUpdateForm="{editedItem}">
           <v-card-text>
             <v-container>
               <v-row class="d-flex flex-grow-1 flex-column">
@@ -38,7 +38,7 @@
                   </v-layout>
                 </ValidationProvider>
                 <ValidationProvider
-                  name="Город"
+                  name="Длительность"
                   rules="required"
                   v-slot="{ errors }"
                 >
@@ -47,36 +47,9 @@
                     class="control-group flex-grow-0"
                   >
                     <v-label>
-                      <v-subheader>Город</v-subheader>
-                      <v-select
-                        v-model="editedItem.cityId"
-                        :items="cities"
-                        :menu-props="menuProps"
-                        :error-messages="errors"
-                        append-icon="unfold_more"
-                        item-value="id"
-                        item-text="name"
-                        item-color="admin-primary"
-                        single-line
-                        persistent-placeholder
-                        outlined
-                      ></v-select>
-                    </v-label>
-                  </v-layout>
-                </ValidationProvider>
-                <ValidationProvider
-                  name="Адрес"
-                  rules="required"
-                  v-slot="{ errors }"
-                >
-                  <v-layout
-                    column
-                    class="control-group flex-grow-0"
-                  >
-                    <v-label>
-                      <v-subheader>Адрес</v-subheader>
+                      <v-subheader>Длительность</v-subheader>
                       <v-textarea
-                        v-model="editedItem.address"
+                        v-model="editedItem.unit"
                         :error-messages="errors"
                         outlined
                         solo
@@ -109,17 +82,12 @@
 </template>
 
 <script>
-import EntityList from "../../components/Entity/EntityList";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import EntityList from "../../components/Entity/EntityList";
 
 export default {
   components: { EntityList },
   data: () => ({
-    menuProps: {
-      bottom: true,
-      offsetY: true,
-      tile: true,
-    },
     headers: [
       {
         text: "Название",
@@ -128,59 +96,47 @@ export default {
         value: "name",
       },
       {
-        text: "Город",
+        text: "Длительность",
         align: "start",
         sortable: false,
-        value: "cityId.name",
-      },
-      {
-        text: "Адрес",
-        align: "start",
-        sortable: false,
-        value: "address",
+        value: "unit",
       },
       { text: "", value: "actions", align: "end", sortable: false },
     ],
   }),
   created() {
-    this.getPoints();
-    this.getCities();
+    this.getUnits();
   },
   methods: {
-    ...mapMutations("Point", ["resetPoints"]),
-    ...mapActions("Point", [
-      "requestPoints",
-      "createPoint",
-      "updatePoint",
-      "deletePoint",
+    ...mapMutations("Unit", ["resetUnits"]),
+    ...mapActions("Unit", [
+      "requestUnits",
+      "createUnit",
+      "updateUnit",
+      "deleteUnit",
       "setCurrentPage",
     ]),
-    ...mapActions("City", ["requestCities"]),
-    async getPoints() {
-      const response = await this.requestPoints();
-    },
-    async getCities() {
-      const response = await this.requestCities({ limit: null });
+    async getUnits() {
+      const response = await this.requestUnits();
     },
     handlePageChange(value) {
       this.setCurrentPage(value);
     },
-    create(point) {
-      this.createPoint({ point });
+    create(unit) {
+      this.createUnit({ unit });
     },
-    update(point) {
-      this.updatePoint({ id: point.id, point });
+    update(unit) {
+      this.updateUnit({ id: unit.id, unit });
     },
-    remove(point) {
-      this.deletePoint({ id: point.id });
+    remove(unit) {
+      this.deleteUnit({ id: unit.id });
     },
   },
   computed: {
-    ...mapGetters("Point", ["isRequesting", "points", "pagination"]),
-    ...mapGetters("City", ["isRequesting", "cities"]),
+    ...mapGetters("Unit", ["isRequesting", "units", "pagination"]),
   },
   beforeDestroy() {
-    this.resetPoints();
+    this.resetUnits();
   },
 };
 </script>

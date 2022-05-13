@@ -23,12 +23,14 @@
       <v-select
         v-for="filter in filters"
         :key="filter.name"
+        v-model="filter.selectedValue"
         :items="filter.values"
         :placeholder="filter.name"
         :label="filter.name"
         :menu-props="menuProps"
         append-icon="unfold_more"
         item-text="name"
+        item-value="id"
         item-color="admin-primary"
         single-line
         persistent-placeholder
@@ -38,13 +40,14 @@
         <v-btn
           color="primary"
           elevation="0"
+          @click="$emit('sumbit')"
         >
           Применить
         </v-btn>
         <v-btn
           color="secondary"
           elevation="0"
-          @click="filterDialog = !filterDialog"
+          @click="$emit('reset')"
         >
           Сбросить
         </v-btn>
@@ -58,14 +61,17 @@
     <v-select
       v-for="filter in filters"
       :key="filter.name"
+      v-model="filter.selectedValue"
       :items="filter.values"
       :placeholder="filter.name"
       :label="filter.name"
       :menu-props="menuProps"
       append-icon="unfold_more"
       item-text="name"
+      item-value="id"
       item-color="admin-primary"
       single-line
+      clearable
       persistent-placeholder
       outlined
     ></v-select>
@@ -73,13 +79,14 @@
       <v-btn
         color="secondary"
         elevation="0"
-        @click="filterDialog = !filterDialog"
+        @click="$emit('reset')"
       >
         Сбросить
       </v-btn>
       <v-btn
         color="primary"
         elevation="0"
+        @click="$emit('sumbit')"
       >
         Применить
       </v-btn>

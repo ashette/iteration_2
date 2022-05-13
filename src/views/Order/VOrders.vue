@@ -2,19 +2,34 @@
   <div class="admin-content">
     <h1>Заказы</h1>
     <v-container
-      class="admin-content__container d-flex flex-column elevation-5"
+      class="admin-content__container d-flex flex-column elevation-5 flex-grow-1"
       fluid
     >
       <v-row
         class="flex-grow-0"
         no-gutters
       >
-        <filters :filters="filters" />
+        <filters
+          :filters="filters"
+          @sumbit="handleRequestFilters"
+          @reset="handleResetFilters"
+        />
       </v-row>
       <v-container
         class="table-container flex-grow-1"
         fluid
       >
+        <v-row
+          v-if="isRequesting"
+          no-gutters
+          class="justify-center align-center fill-height"
+        >
+          <v-progress-circular
+            indeterminate
+            size="54"
+            color="primary"
+          ></v-progress-circular>
+        </v-row>
         <v-row
           v-for="order in orders"
           :key="order.id"
@@ -25,7 +40,7 @@
             cols="1"
           >
             <v-img
-              :src="order.carId.thumbnail.path"
+              :src="getOrderThumbnail(order)"
               contain
               max-width="140"
             ></v-img>
@@ -35,9 +50,9 @@
             cols="4"
           >
             <div>
-              <strong>{{ order.carId.name }}</strong> в
-              <strong>{{ order.cityId.name }}</strong> ,
-              {{ order.pointId.address }}
+              <strong>{{ getOrderCarName(order) }}</strong> в
+              <strong>{{ getOrderCityName(order) }}</strong> ,
+              {{ getOrderAddress(order) }}
             </div>
             <div>
               {{ getOrderTime(order.dateFrom, order.dateTo) }}
@@ -93,13 +108,14 @@
         no-gutters
       >
         <v-pagination
-          v-model="page"
+          v-model="pagination.page"
           class="admin-pagination d-flex flex-grow-1"
-          :length="10"
-          :total-visible="7"
+          :length="pagination.length"
+          :total-visible="pagination.limit"
           circle
           prev-icon="keyboard_double_arrow_left"
           next-icon="keyboard_double_arrow_right"
+          @input="handlePageChange"
         ></v-pagination>
       </v-row>
       <v-dialog
@@ -136,22 +152,114 @@
 <script>
 import Filters from "@/components/Filters";
 import ControlButtons from "@/components/ControlButtons";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: { Filters, ControlButtons },
+  data: () => ({
+    dialog: false,
+    dialogDelete: false,
+    filters: [
+      { id: "carId", name: "Модель", values: [], selectedValue: null },
+      { id: "cityId", name: "Город", values: [], selectedValue: null },
+      { id: "rateId", name: "Тариф", values: [], selectedValue: null },
+    ],
+    filterParams: {},
+    editedItem: {},
+    defaultItem: {},
+    emptyImg: require("@/assets/no_image.jpg"),
+  }),
+  created() {
+    this.getOrders();
+  },
+  mounted() {
+    this.setFilters();
+  },
+  computed: {
+    ...mapGetters("Order", ["isRequesting", "orders", "pagination"]),
+    ...mapGetters("Car", ["cars"]),
+    ...mapGetters("City", ["cities"]),
+    ...mapGetters("Rate", ["rates"]),
+  },
   methods: {
+    ...mapMutations("Order", ["resetOrders"]),
+    ...mapActions("Order", [
+      "setCurrentPage",
+      "requestOrders",
+      "deleteOrderFromList",
+      "setFilter",
+      "resetFilter",
+    ]),
+    ...mapActions("Car", ["requestCars"]),
+    ...mapActions("City", ["requestCities"]),
+    ...mapActions("Rate", ["requestRates"]),
+    async getOrders(params = {}) {
+      const response = await this.requestOrders(params);
+    },
+    async setFilterCars() {
+      const response = await this.requestCars({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "carId") {
+          item.values = this.cars;
+        }
+        return item;
+      });
+    },
+    async setFilterCities() {
+      const response = await this.requestCities({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "cityId") {
+          item.values = this.cities;
+        }
+        return item;
+      });
+    },
+    async setFilterRates() {
+      const response = await this.requestRates({ limit: null });
+      this.filters = this.filters.map((item) => {
+        if (item.id == "rateId") {
+          item.values = this.rates;
+        }
+        return item;
+      });
+    },
+    setFilters() {
+      this.setFilterCars();
+      this.setFilterCities();
+      this.setFilterRates();
+    },
+    handleRequestFilters() {
+      this.filters.map((filter) => {
+        this.filterParams[filter.id] = filter.selectedValue;
+      });
+      this.setFilter(this.filterParams);
+    },
+    handleResetFilters() {
+      this.filters.map((filter) => {
+        filter.selectedValue = null;
+      });
+      this.filterParams = {};
+      this.resetFilter();
+    },
+    handlePageChange(value) {
+      this.setCurrentPage(value);
+    },
     deleteItem(item) {
-      //TODO
+      this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
-
     deleteItemConfirm() {
-      //TODO
-      this.closeDelete();
+      const order = this.editedItem;
+      if (order) {
+        this.deleteOrderFromList({ id: order.id });
+        this.closeDelete();
+      }
     },
     closeDelete() {
-      //TODO
       this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+      });
     },
     editItem(item) {
       this.$router.push({
@@ -182,276 +290,21 @@ export default {
         return `${formatedDateFrom} - ${formatedDateTo}`;
       }
     },
+    getOrderCarName(order) {
+      return order.carId ? order.carId.name : "";
+    },
+    getOrderCityName(order) {
+      return order.cityId ? order.cityId.name : "";
+    },
+    getOrderAddress(order) {
+      return order.pointId ? order.pointId.address : "";
+    },
+    getOrderThumbnail(order) {
+      return order.carId ? order.carId.thumbnail.path : this.emptyImg;
+    },
   },
-  data: () => ({
-    page: 1,
-    dialog: false,
-    dialogDelete: false,
-    filters: [
-      {
-        name: "Модель",
-        values: [
-          {
-            id: 1,
-            name: "Модель1",
-          },
-          {
-            id: 2,
-            name: "Модель2",
-          },
-        ],
-      },
-      {
-        name: "Город",
-        values: [
-          {
-            id: 1,
-            name: "Город1",
-          },
-          {
-            id: 2,
-            name: "Город2",
-          },
-        ],
-      },
-      {
-        name: "Статус",
-        values: [
-          {
-            id: 1,
-            name: "Статус1",
-          },
-          {
-            id: 2,
-            name: "Статус2",
-          },
-        ],
-      },
-    ],
-    orders: [
-      {
-        updatedAt: 1649615356071,
-        createdAt: 1649615356071,
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          description:
-            "Пробег до 500 км на одном зараде. Отличный выбор для деловых поездок",
-          priceMin: 10000,
-          priceMax: 15000,
-          name: "Tesla Model S",
-          number: "А700АА",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-            mimetype: "image/jpeg",
-            originalname: "karelia.jpg",
-            size: 81898,
-          },
-          tank: 777,
-          colors: ["Синий", "Алый", "Белый", "Синий"],
-          id: "600ff1f6ad015e0bb6997d65",
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        rateId: {
-          rateTypeId: {
-            unit: "мин",
-            name: "Поминутно",
-            id: "5e26a07f099b810b946c5d82",
-          },
-          price: 7,
-          id: "61af4296bb7a006c05c54c4b",
-        },
-        price: 10280,
-        isNeedChildChair: true,
-        orderStatusId: {
-          name: "Новые",
-          id: "5e26a191099b810b946c5d89",
-        },
-        id: "625321fc73b61100181024d6",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "2",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "3",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "4",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "5",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "6",
-      },
-      {
-        cityId: {
-          name: "Санкт-Петербург",
-          id: "6005b8f9ad015e0bb6997778",
-        },
-        pointId: {
-          name: "Пункт",
-          address: "56 Литейный проспект",
-          id: "615ae47018f5c2264119b939",
-        },
-        carId: {
-          name: "Tesla Model S",
-          categoryId: {
-            name: "Бизнес",
-            description: "Бизнес",
-            id: "611171dd2aed9a0b9b8506f9",
-          },
-          thumbnail: {
-            path: require("@/assets/car.jpg"),
-          },
-        },
-        color: "Синий",
-        dateFrom: 1649620800000,
-        dateTo: 1649707200000,
-        price: 10280,
-        isNeedChildChair: true,
-        id: "7",
-      },
-    ],
-  }),
+  beforeDestroy() {
+    this.resetOrders();
+  },
 };
 </script>
